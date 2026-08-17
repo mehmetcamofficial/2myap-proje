@@ -1,0 +1,139 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: quote-requests
+    description: Lead capture operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /quote-requests:
+    post:
+      operationId: createQuoteRequest
+      tags: [quote-requests]
+      summary: Submit a quote request
+      description: Creates a lead from the website quote form.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuoteRequestInput"
+      responses:
+        "201":
+          description: Quote request received
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuoteRequest"
+        "400":
+          description: Invalid quote request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    QuoteRequestInput:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+        phone:
+          type: string
+          minLength: 7
+        service:
+          type: string
+          minLength: 2
+        area:
+          type: string
+          minLength: 2
+        description:
+          type: string
+          minLength: 10
+        contactMethod:
+          type: string
+          enum: [whatsapp, phone]
+        photoNames:
+          type: array
+          items:
+            type: string
+          maxItems: 5
+        honeypot:
+          type: string
+      required:
+        - name
+        - phone
+        - service
+        - area
+        - description
+        - contactMethod
+    QuoteRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        phone:
+          type: string
+        service:
+          type: string
+        area:
+          type: string
+        description:
+          type: string
+        contactMethod:
+          type: string
+        photoNames:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - phone
+        - service
+        - area
+        - description
+        - contactMethod
+        - photoNames
+        - createdAt
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
