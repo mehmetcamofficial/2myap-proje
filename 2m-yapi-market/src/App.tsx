@@ -1,254 +1,627 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Link, Route, Switch, useLocation, useRoute } from 'wouter';
+import { Link, Route, Switch, useRoute } from 'wouter';
 import { useCreateQuoteRequest } from '@workspace/api-client-react';
 import {
-  ArrowDownRight, ArrowRight, Check, ChevronDown, CircleCheck, FileText, Hammer,
-  Mail, MapPin, Menu, MessageCircle, Phone, Ruler, Send, ShieldCheck,
-  Sparkles, X, Zap,
+  ArrowRight, ChevronDown, MapPin, Menu, MessageCircle, PaintBucket, Phone, Ruler, Send, X,
 } from 'lucide-react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { setBaseUrl } from '@workspace/api-client-react';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
+import { QuoteForm } from '@/components/quote-form';
+import { BeforeAfter } from '@/components/before-after';
+import { CONTACT, NAV, SITE, whatsappUrl } from '@/data/site';
+import { services, CATEGORY_LABELS } from '@/data/services';
+import { demoProjects, beforeAfter, processSteps, faqItems } from '@/data/content';
 
 const queryClient = new QueryClient();
-const PHONE = import.meta.env.VITE_BUSINESS_PHONE || '05437280711';
-const WHATSAPP = import.meta.env.VITE_WHATSAPP_PHONE || '905437280711';
-const whatsappUrl = (message: string) =>
-  `https://wa.me/${WHATSAPP.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
+const PHONE = CONTACT.phoneRaw;
+const WHATSAPP = CONTACT.whatsapp;
 
-const services = [
-  { slug: 'kusadasi-tadilat', name: 'Tadilat & yenileme', category: 'İç mekân', description: 'Yaşadığınız alanı doğru plan, malzeme ve uygulama ile baştan ele alalım.', icon: Ruler, accent: 'terracotta' },
-  { slug: 'kusadasi-boya-badana', name: 'Boya & badana', category: 'İç mekân', description: 'Renk, yüzey ve temiz uygulama. Küçük dokunuştan kapsamlı yenilemeye.', icon: Sparkles, accent: 'cream' },
-  { slug: 'kusadasi-cati-tamiri', name: 'Çatı tamiri', category: 'Dış yapı', description: 'Su alan, yıpranan veya yenilenmesi gereken çatılar için keşif ve uygulama.', icon: ShieldCheck, accent: 'teal' },
-  { slug: 'kusadasi-celik-konstruksiyon', name: 'Çelik konstrüksiyon', category: 'Yapısal', description: 'İhtiyaca göre tasarlanan sağlam taşıyıcı çözümler.', icon: Hammer, accent: 'ink' },
-  { slug: 'kusadasi-prefabrik', name: 'Prefabrik yapılar', category: 'Yapısal', description: 'Kullanım amacına göre planlanan pratik yapı çözümleri.', icon: FileText, accent: 'cream' },
-  { slug: 'kusadasi-konteyner', name: 'Konteyner çözümleri', category: 'Yapısal', description: 'Şantiye, depo veya kullanım alanı için işlevsel konteynerler.', icon: Zap, accent: 'terracotta' },
-  { slug: 'kusadasi-mantolama', name: 'Mantolama', category: 'Dış yapı', description: 'Yapının dış kabuğunu iyileştiren, planlı ısı yalıtımı uygulamaları.', icon: ShieldCheck, accent: 'teal' },
-  { slug: 'kusadasi-seramik-doseme', name: 'Seramik döşeme', category: 'İç mekân', description: 'Zemin ve duvarlarda ölçülü, temiz, uzun ömürlü uygulama.', icon: Ruler, accent: 'ink' },
-  { slug: 'kusadasi-su-tesisatcisi', name: 'Su tesisatı', category: 'Teknik', description: 'Arıza, yenileme ve yeni hat ihtiyaçları için çözüm.', icon: Zap, accent: 'teal' },
-  { slug: 'kusadasi-elektrikci', name: 'Elektrik işleri', category: 'Teknik', description: 'Güvenli, düzenli ve ihtiyaca uygun elektrik uygulamaları.', icon: Zap, accent: 'cream' },
-  { slug: 'kusadasi-havuz-yapimi', name: 'Havuz yapımı', category: 'Dış alan', description: 'Bahçenize ve kullanımınıza göre planlanan havuz projeleri.', icon: Sparkles, accent: 'terracotta' },
-  { slug: 'kusadasi-pergola', name: 'Pergola', category: 'Dış alan', description: 'Gölge, konfor ve açık hava için bahçeye uyumlu çözümler.', icon: Hammer, accent: 'teal' },
-];
+// Quote requests POST to the relative `/api/quote-requests` endpoint.
+// On a static Vercel deployment there is no API server unless one is
+// attached — set VITE_API_BASE_URL to the deployed API origin. Without it,
+// submissions fail gracefully and the UI directs visitors to WhatsApp.
+const apiBase = import.meta.env.VITE_API_BASE_URL;
+if (apiBase) setBaseUrl(apiBase.replace(/\/+$/, ''));
 
-const areas = ['Kuşadası', 'Soğucak', 'Davutlar', 'Güzelçamlı'];
-const faqItems = [
-  ['Keşif talebi nasıl ilerliyor?', 'Kısaca neye ihtiyacınız olduğunu ve bulunduğunuz bölgeyi paylaşın. Ekibimiz, uygun iletişim kanalından sizinle detayları netleştirsin.'],
-  ['Sadece malzeme mi, uygulama da var mı?', 'Malzeme, usta ve uygulama adımlarını tek bir konuşmada bir araya getirmek için buradayız. İhtiyacınızın kapsamını birlikte belirleriz.'],
-  ['Fotoğraf gönderebilir miyim?', 'Evet. Formda en fazla 5 fotoğraf adı paylaşabilirsiniz; WhatsApp üzerinden de alanı gösteren görseller gönderebilirsiniz.'],
-  ['Hangi bölgelerde hizmet veriyorsunuz?', 'Kuşadası, Soğucak, Davutlar ve Güzelçamlı odağımızdaki hizmet alanlarıdır.'],
-];
+// Centralised production site URL for SEO metadata (no preview URLs).
+export const PUBLIC_SITE_URL = (import.meta.env.VITE_PUBLIC_SITE_URL || 'https://2myapimarket.vercel.app').replace(/\/+$/, '');
 
-type FormValues = {
-  name: string; phone: string; service: string; area: string; description: string;
-  contactMethod: 'whatsapp' | 'phone'; honeypot?: string;
-};
-const quoteSchema = z.object({
-  name: z.string().min(2, 'Ad soyad en az 2 karakter olmalı.'),
-  phone: z.string().min(7, 'Geçerli bir telefon numarası yazın.'),
-  service: z.string().min(2, 'Bir hizmet seçin.'),
-  area: z.string().min(2, 'Bölgenizi seçin.'),
-  description: z.string().min(10, 'İhtiyacınızı en az 10 karakterle anlatın.'),
-  contactMethod: z.enum(['whatsapp', 'phone']),
-  honeypot: z.string().optional(),
-});
-
-function Meta({ title, description }: { title: string; description: string }) {
+/* ----------------------------- SEO / meta ------------------------------- */
+function Meta({
+  title,
+  description,
+  path = '/',
+  service,
+}: {
+  title: string;
+  description: string;
+  path?: string;
+  service?: (typeof services)[number];
+}) {
   useEffect(() => {
     document.title = title;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', description);
+    let m = document.querySelector('meta[name="description"]');
+    if (m) m.setAttribute('content', description);
+
+    const ensure = (attr: string, val: string, prop = false) => {
+      const sel = prop ? `meta[property="${attr}"]` : `meta[name="${attr}"]`;
+      let el = document.querySelector(sel);
+      if (!el) {
+        el = document.createElement('meta');
+        (prop ? el.setAttribute('property', attr) : el.setAttribute('name', attr));
+        document.head.appendChild(el);
+      }
+      el.setAttribute('content', val);
+    };
+    ensure('og:title', title);
+    ensure('og:description', description);
+    ensure('og:type', 'website', true);
+    ensure('og:url', `${PUBLIC_SITE_URL}${path}`, true);
+    ensure('og:image', service?.image || `${PUBLIC_SITE_URL}/favicon.svg`, true);
+
+    const ld: object[] = [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'HomeAndConstructionBusiness',
+        name: SITE.name,
+        description: SITE.description,
+        url: PUBLIC_SITE_URL,
+        telephone: CONTACT.phoneDisplay,
+        address: { '@type': 'PostalAddress', streetAddress: 'Kuşadası Davutlar Yolu No:75', addressLocality: 'Kuşadası', addressRegion: 'Aydın', postalCode: '09400', addressCountry: 'TR' },
+        areaServed: CONTACT.areas.map((a) => ({ '@type': 'Place', name: a })),
+      },
+    ];
+    if (service) {
+      ld.push({
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name: service.name,
+        description: service.short,
+        provider: { '@type': 'HomeAndConstructionBusiness', name: SITE.name, url: PUBLIC_SITE_URL },
+        areaServed: CONTACT.areas,
+        serviceType: service.name,
+      });
+    }
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.text = JSON.stringify(ld);
+    document.head.appendChild(script);
   }, [title, description]);
+
   return null;
 }
 
-function Logo() {
-  return <Link href="/" data-testid="link-logo" className="focus-ring flex items-center gap-3">
-    <span className="relative grid h-10 w-10 place-items-center bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]">
-      <span className="absolute inset-[7px] border border-current"></span>
-      <span className="font-mono-brand text-[11px] font-medium tracking-tighter">2M</span>
-    </span>
-    <span className="leading-none"><strong className="block text-[15px] tracking-[-.04em]">2M YAPI MARKET</strong><small className="mt-1 block font-mono-brand text-[9px] tracking-[.22em] text-[hsl(var(--muted-foreground))]">PROJE BIANCA</small></span>
-  </Link>;
+function Mark() {
+  return (
+    <Link href="/" className="flex items-center gap-3" aria-label="2M Yapı Market ana sayfa">
+      <span className="relative grid h-10 w-10 place-items-center bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]">
+        <span className="absolute inset-[7px] border border-current" />
+        <span className="font-mono-brand text-[11px] font-medium">2M</span>
+      </span>
+      <span className="leading-none">
+        <strong className="block text-[15px] tracking-[-.04em]">2M YAPI MARKET</strong>
+        <small className="mt-1 block font-mono-brand text-[9px] tracking-[.22em]">PROJE BIANCA · KUŞADASI</small>
+      </span>
+    </Link>
+  );
 }
 
 function Header() {
   const [open, setOpen] = useState(false);
-  const [location] = useLocation();
-  const nav = [['/', 'Ana sayfa'], ['/hizmetler', 'Hizmetler'], ['/iletisim', 'İletişim']];
-  return <header className="relative z-30 border-b border-[hsl(var(--border)/.7)] bg-[hsl(var(--background)/.88)] backdrop-blur-md">
-    <div className="mx-auto flex h-[76px] max-w-[1240px] items-center justify-between px-5 md:px-8">
-      <Logo />
-      <nav aria-label="Ana menü" className="hidden items-center gap-8 md:flex">
-        {nav.map(([href, label]) => <Link key={href} href={href} data-testid={`link-nav-${label.toLowerCase().replaceAll(' ', '-')}`} className={`focus-ring text-[12px] font-semibold uppercase tracking-[.12em] transition-colors hover:text-[hsl(var(--primary))] ${location === href ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))]'}`}>{label}</Link>)}
-      </nav>
-      <div className="hidden items-center gap-3 md:flex">
-        <a href={whatsappUrl('Merhaba, bir projem için bilgi almak istiyorum.')} target="_blank" rel="noopener noreferrer" data-testid="link-header-whatsapp" className="focus-ring inline-flex items-center gap-2 border border-[hsl(var(--accent))] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--accent))] transition hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))]"><MessageCircle size={15} /> WhatsApp</a>
-        <Link href="/iletisim" data-testid="link-header-quote" className="focus-ring inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary-foreground))] transition hover:bg-[hsl(var(--accent))]">Keşif iste <ArrowRight size={15} /></Link>
-      </div>
-      <button type="button" aria-label="Menüyü aç" aria-expanded={open} data-testid="button-mobile-menu" onClick={() => setOpen(!open)} className="focus-ring p-2 md:hidden">{open ? <X size={22} /> : <Menu size={22} />}</button>
-    </div>
-    {open && <nav aria-label="Mobil menü" className="border-t border-[hsl(var(--border))] px-5 py-4 md:hidden">
-      {nav.map(([href, label]) => <Link key={href} href={href} data-testid={`link-mobile-${label.toLowerCase().replaceAll(' ', '-')}`} onClick={() => setOpen(false)} className="focus-ring block border-b border-[hsl(var(--border)/.7)] py-3 text-sm font-semibold">{label}</Link>)}
-      <Link href="/iletisim" data-testid="link-mobile-quote" onClick={() => setOpen(false)} className="mt-4 flex items-center justify-center gap-2 bg-[hsl(var(--primary))] px-4 py-3 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary-foreground))]">Keşif iste <ArrowRight size={15} /></Link>
-    </nav>}
-  </header>;
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+  return (
+    <>
+      <header className="sticky top-0 z-50 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/.9)] backdrop-blur-md">
+        <div className={`mx-auto flex ${scrolled ? 'h-16' : 'h-20'} max-w-[1240px] items-center justify-between px-5 md:px-8`}>
+          <Mark />
+          <nav aria-label="Ana menü" className="hidden items-center gap-6 md:flex">
+            {NAV.map((n) =>
+              n.anchor ? (
+                <a key={n.label} href={`#${n.anchor}`} className="text-[12px] font-semibold uppercase tracking-[.12em] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]">{n.label}</a>
+              ) : (
+                <Link key={n.label} href={n.href} className="text-[12px] font-semibold uppercase tracking-[.12em] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]">{n.label}</Link>
+              ),
+            )}
+          </nav>
+          <div className="hidden items-center gap-3 md:flex">
+            <a href={whatsappUrl('Merhaba, bir proje için bilgi almak istiyorum.')} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[hsl(var(--accent))] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--accent))] hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))]"><MessageCircle size={15} /> WhatsApp</a>
+            <Link href="/iletisim" className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary-foreground))]">Keşif iste <ArrowRight size={15} /></Link>
+          </div>
+          <button type="button" aria-label="Menü aç" aria-expanded={open} onClick={() => setOpen(!open)} className="p-2 md:hidden">{open ? <X size={22} /> : <Menu size={22} />}</button>
+        </div>
+      </header>
+      {open && (
+        <nav aria-label="Mobil menü" className="fixed inset-0 z-50 flex flex-col justify-between bg-[hsl(var(--foreground))] px-7 py-8 text-[hsl(var(--background))]">
+          <button type="button" aria-label="Menü kapat" onClick={() => setOpen(false)} className="self-end"><X size={26} /></button>
+          <div className="flex flex-col gap-2">
+            <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] opacity-60">ANA MENÜ</p>
+            {NAV.map((n) => (
+              <Link key={n.label} href={n.href} onClick={() => setOpen(false)} className="border-b border-[hsl(var(--background)/.14)] py-3 text-xl font-bold">{n.label}</Link>
+            ))}
+          </div>
+          <div className="flex flex-col gap-3 py-4">
+            <a href={`tel:${CONTACT.phoneRaw}`} className="flex items-center gap-3 text-sm"><Phone size={17} /> {CONTACT.phoneDisplay}</a>
+            <a href={whatsappUrl('Merhaba, 2M hakkında bilgi almak istiyorum.')} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm"><MessageCircle size={17} /> WhatsApp</a>
+            <p className="text-xs opacity-70">Soğucak · Kuşadası Davutlar Yolu No:75</p>
+          </div>
+        </nav>
+      )}
+    </>
+  );
 }
-
 function Footer() {
-  return <footer className="border-t border-[hsl(var(--border))] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]">
-    <div className="mx-auto grid max-w-[1240px] gap-12 px-5 py-14 md:grid-cols-[1.5fr_1fr_1fr] md:px-8">
-      <div><Logo /><p className="mt-6 max-w-sm text-sm leading-7 text-[hsl(var(--accent-foreground)/.72)]">Malzemeyi, güvenilir uygulamayı ve proje aklını aynı konuşmada buluşturan yerel yapı partneriniz.</p></div>
-      <div><p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-[hsl(var(--accent-foreground)/.55)]">Kısayollar</p><div className="mt-4 grid gap-3 text-sm"><Link href="/hizmetler" data-testid="link-footer-services" className="hover:text-[hsl(var(--primary))]">Hizmetler</Link><Link href="/iletisim" data-testid="link-footer-contact" className="hover:text-[hsl(var(--primary))]">İletişim ve keşif</Link></div></div>
-      <div><p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-[hsl(var(--accent-foreground)/.55)]">Hizmet alanı</p><p data-testid="text-footer-areas" className="mt-4 text-sm leading-7 text-[hsl(var(--accent-foreground)/.72)]">Kuşadası · Soğucak<br />Davutlar · Güzelçamlı</p><Link href="/iletisim" data-testid="link-footer-reach-out" className="mt-4 inline-flex items-center gap-2 text-sm hover:text-[hsl(var(--primary))]"><Mail size={14} /> İletişim formuna git</Link></div>
-    </div>
-    <div className="mx-auto flex max-w-[1240px] flex-col gap-2 border-t border-[hsl(var(--accent-foreground)/.14)] px-5 py-5 font-mono-brand text-[10px] text-[hsl(var(--accent-foreground)/.5)] md:flex-row md:justify-between md:px-8"><span>© 2M Yapı Market Proje Bianca</span><span>Yerel düşünür, doğru uygular.</span></div>
-  </footer>;
+  return (
+    <footer className="border-t border-[hsl(var(--border))] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]">
+      <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-14 md:grid-cols-[1.3fr_1fr_1fr_1.2fr] md:px-8">
+        <div>
+          <Mark />
+          <p className="mt-6 max-w-sm text-sm leading-7 text-[hsl(var(--accent-foreground)/.72)]">Malzemeyi, güvenilir uygulamayı ve proje aklını tek noktada buluşturan yerel yapı partneriniz.</p>
+        </div>
+        <div>
+          <p className="font-mono-brand text-[10px] uppercase tracking-[.2em]">Kısayollar</p>
+          <div className="mt-4 grid gap-3 text-sm">
+            <Link href="/hizmetler">Hizmetler</Link>
+            <a href="#uygulama">Uygulamalar</a>
+            <Link href="/iletisim">İletişim & Keşif</Link>
+          </div>
+        </div>
+        <div>
+          <p className="font-mono-brand text-[10px] uppercase tracking-[.2em]">Hizmetler</p>
+          <div className="mt-4 grid gap-3 text-sm">
+            {services.slice(0, 5).map((s) => <Link key={s.id} href="/hizmetler">{s.name}</Link>)}
+          </div>
+        </div>
+        <div>
+          <p className="font-mono-brand text-[10px] uppercase tracking-[.2em]">İletişim</p>
+          <div className="mt-4 text-sm leading-7 text-[hsl(var(--accent-foreground)/.8)]">
+            <p>Kuşadası Davutlar Yolu No:75</p>
+            <p>Soğucak · 09400 Kuşadası / Aydın</p>
+            <a href={`tel:${CONTACT.phoneRaw}`} className="mt-3 inline-block py-1">{CONTACT.phoneDisplay}</a>
+            <a href={whatsappUrl('Merhaba, 2M hakkında bilgi almak istiyorum.')} target="_blank" rel="noopener noreferrer" className="mt-2 flex items-center gap-2 py-1"><MessageCircle size={15} /> WhatsApp</a>
+          </div>
+        </div>
+      </div>
+      <div className="mx-auto flex max-w-[1240px] flex-col gap-2 border-t border-[hsl(var(--accent-foreground)/.14)] px-5 py-5 font-mono-brand text-[10px] md:flex-row md:justify-between md:px-8">
+        <span>© {SITE.name}</span>
+        <span>Kuşadası · Yapı · Tadilat · Uygulama</span>
+      </div>
+    </footer>
+  );
 }
 
-function MobileContactBar() {
-  return <div className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-2 border-t border-[hsl(var(--border))] bg-[hsl(var(--card)/.96)] p-2 backdrop-blur md:hidden">
-    {PHONE ? <a href={`tel:${PHONE}`} data-testid="link-mobile-call" className="flex items-center justify-center gap-2 py-3 text-xs font-bold uppercase tracking-wider"><Phone size={16} /> Ara</a> : <Link href="/iletisim" data-testid="link-mobile-call" className="flex items-center justify-center gap-2 py-3 text-xs font-bold uppercase tracking-wider"><Phone size={16} /> Görüşelim</Link>}
-    <a href={whatsappUrl('Merhaba, projem için keşif ve fiyat bilgisi almak istiyorum.')} target="_blank" rel="noopener noreferrer" data-testid="link-mobile-whatsapp" className="flex items-center justify-center gap-2 bg-[hsl(var(--primary))] py-3 text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary-foreground))]"><MessageCircle size={16} /> WhatsApp</a>
-  </div>;
-}
-
-function FloatingWhatsApp() {
-  return <a href={whatsappUrl('Merhaba, 2M Yapı Market hakkında bilgi almak istiyorum.')} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ile yazış" data-testid="link-floating-whatsapp" className="fixed bottom-20 right-5 z-20 grid h-14 w-14 place-items-center rounded-full bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] shadow-[0_8px_24px_rgba(44,70,67,.25)] transition hover:-translate-y-1 md:bottom-7 md:right-7"><MessageCircle size={23} /></a>;
-}
-
-function QuoteForm({ compact = false }: { compact?: boolean }) {
-  const [photoNames, setPhotoNames] = useState<string[]>([]);
-  const [submittedId, setSubmittedId] = useState<string | null>(null);
-  const mutation = useCreateQuoteRequest();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(quoteSchema),
-    defaultValues: { contactMethod: 'whatsapp', service: '', area: '', name: '', phone: '', description: '', honeypot: '' },
-  });
-  const onSubmit = (values: FormValues) => {
-    mutation.mutate({ data: { ...values, photoNames, honeypot: values.honeypot || '' } }, {
-      onSuccess: (data) => { setSubmittedId(data.id); reset(); setPhotoNames([]); },
-    });
-  };
-  if (submittedId) return <div data-testid="status-quote-success" className="flex min-h-[360px] flex-col justify-center bg-[hsl(var(--accent))] p-8 text-[hsl(var(--accent-foreground))]">
-    <CircleCheck size={38} className="mb-5 text-[hsl(var(--primary))]" /><p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-[hsl(var(--accent-foreground)/.6)]">Talebiniz alındı</p><h3 className="mt-3 font-display text-4xl">Konuşmaya hazırız.</h3><p className="mt-4 text-sm leading-7 text-[hsl(var(--accent-foreground)/.75)]">İsteğiniz kayıt altına alındı. Tercih ettiğiniz iletişim kanalından size dönüş yapacağız.</p><button type="button" data-testid="button-new-quote" onClick={() => setSubmittedId(null)} className="mt-7 inline-flex w-fit items-center gap-2 border border-[hsl(var(--accent-foreground)/.35)] px-4 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[hsl(var(--accent-foreground)/.1)]">Yeni talep <ArrowRight size={14} /></button>
-  </div>;
-  return <form onSubmit={handleSubmit(onSubmit)} data-testid={`form-quote-${compact ? 'compact' : 'main'}`} className="space-y-4">
-    <div className="grid gap-4 sm:grid-cols-2">
-      <label className="grid gap-2 text-xs font-bold">Ad soyad<input {...register('name')} data-testid="input-quote-name" placeholder="Adınız ve soyadınız" className="form-input" />{errors.name && <span data-testid="error-quote-name" className="form-error">{errors.name.message}</span>}</label>
-      <label className="grid gap-2 text-xs font-bold">Telefon<input {...register('phone')} data-testid="input-quote-phone" placeholder="05xx xxx xx xx" className="form-input" />{errors.phone && <span data-testid="error-quote-phone" className="form-error">{errors.phone.message}</span>}</label>
+function BottomBar() {
+  return (
+    <div className="fixed inset-x-0 bottom-0 z-45 grid grid-cols-3 border-t border-[hsl(var(--border))] bg-[hsl(var(--card)/.96)] pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
+      <a href={`tel:${CONTACT.phoneRaw}`} className="flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-bold uppercase"><Phone size={16} /> Ara</a>
+      <a href={whatsappUrl('Merhaba, keşif ve fiyat bilgisi almak istiyorum.')} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-bold uppercase"><MessageCircle size={16} /> WhatsApp</a>
+      <Link href="/iletisim" className="flex flex-col items-center justify-center gap-1 bg-[hsl(var(--primary))] py-2.5 text-[10px] font-bold uppercase text-[hsl(var(--primary-foreground))]"><ArrowRight size={16} /> Keşif iste</Link>
     </div>
-    <div className="grid gap-4 sm:grid-cols-2">
-      <label className="grid gap-2 text-xs font-bold">Hizmet<select {...register('service')} data-testid="select-quote-service" className="form-input"><option value="">Hizmet seçin</option>{services.map(s => <option key={s.slug} value={s.name}>{s.name}</option>)}</select>{errors.service && <span className="form-error">{errors.service.message}</span>}</label>
-      <label className="grid gap-2 text-xs font-bold">Bölge<select {...register('area')} data-testid="select-quote-area" className="form-input"><option value="">Bölgenizi seçin</option>{areas.map(area => <option key={area} value={area}>{area}</option>)}</select>{errors.area && <span className="form-error">{errors.area.message}</span>}</label>
-    </div>
-    <label className="grid gap-2 text-xs font-bold">İhtiyacınız nedir?<textarea {...register('description')} data-testid="textarea-quote-description" rows={compact ? 3 : 4} placeholder="Mekânı, yapılacak işi veya mevcut durumu kısaca anlatın." className="form-input resize-none" />{errors.description && <span data-testid="error-quote-description" className="form-error">{errors.description.message}</span>}</label>
-    <div className="flex flex-wrap items-center gap-4">
-      <span className="text-xs font-bold">Nasıl ulaşalım?</span>
-      <label className="flex items-center gap-2 text-xs"><input {...register('contactMethod')} value="whatsapp" type="radio" data-testid="radio-contact-whatsapp" className="accent-[hsl(var(--primary))]" /> WhatsApp</label>
-      <label className="flex items-center gap-2 text-xs"><input {...register('contactMethod')} value="phone" type="radio" data-testid="radio-contact-phone" className="accent-[hsl(var(--primary))]" /> Telefon</label>
-    </div>
-    <label className="group flex cursor-pointer items-center gap-3 border border-dashed border-[hsl(var(--border))] px-4 py-3 text-xs text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary))]"><FileText size={16} /><span>{photoNames.length ? `${photoNames.length} fotoğraf seçildi` : 'İsterseniz fotoğraf ekleyin (en fazla 5)'}</span><input type="file" accept="image/*" multiple data-testid="input-quote-photos" className="hidden" onChange={e => setPhotoNames(Array.from(e.target.files || []).slice(0, 5).map(file => file.name))} /></label>
-    <input {...register('honeypot')} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" data-testid="input-quote-honeypot" />
-    {mutation.isError && <div role="alert" data-testid="status-quote-error" className="border border-[hsl(var(--destructive)/.3)] bg-[hsl(var(--destructive)/.06)] px-3 py-2 text-xs text-[hsl(var(--destructive))]">Talebiniz gönderilemedi. Lütfen tekrar deneyin veya WhatsApp üzerinden yazın.</div>}
-    <button type="submit" disabled={mutation.isPending} data-testid="button-submit-quote" className="flex w-full items-center justify-center gap-2 bg-[hsl(var(--primary))] px-5 py-4 text-xs font-extrabold uppercase tracking-[.14em] text-[hsl(var(--primary-foreground))] transition hover:bg-[hsl(var(--accent))] disabled:cursor-wait disabled:opacity-60">{mutation.isPending ? 'Gönderiliyor...' : 'Keşif talebi gönder'} <Send size={15} /></button>
-    <p className="text-[10px] leading-5 text-[hsl(var(--muted-foreground))]">Bilgilerinizi yalnızca talebinizle ilgili iletişim kurmak için kullanırız.</p>
-  </form>;
+  );
 }
+/* -------------------------------- HERO ------------------------------------ */
+const HERO_IMG = 'https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600';
 
 function Hero() {
-  return <section className="relative overflow-hidden bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]">
-    <div className="blueprint-grid absolute inset-0 opacity-40"></div>
-    <div className="architectural-lines absolute inset-0 opacity-60"></div>
-    <div className="relative mx-auto grid max-w-[1240px] gap-10 px-5 pb-16 pt-14 md:grid-cols-[1.05fr_.95fr] md:items-center md:px-8 md:pb-24 md:pt-20">
-      <div className="reveal">
-        <p data-testid="text-hero-kicker" className="font-mono-brand text-[10px] uppercase tracking-[.26em] text-[hsl(var(--accent-foreground)/.65)]">KUŞADASI VE ÇEVRESİ / YAPI & PROJE</p>
-        <h1 data-testid="heading-hero" className="mt-6 max-w-[680px] font-display text-[clamp(4rem,8vw,7.7rem)] leading-[.84] tracking-[-.045em]">İyi iş,<br /><em className="text-[hsl(var(--primary))]">doğru</em> konuşmayla<br />başlar.</h1>
-        <p data-testid="text-hero-description" className="mt-8 max-w-[490px] text-base leading-8 text-[hsl(var(--accent-foreground)/.74)] md:text-lg">Malzemeyi, güvenilir uygulamayı ve proje aklını tek bir yerde buluşturuyoruz. Eviniz, iş yeriniz veya planınızdaki yeni yapı için ilk adımı birlikte atalım.</p>
-        <div className="mt-9 flex flex-wrap gap-3">
-          <Link href="/iletisim" data-testid="link-hero-quote" className="focus-ring inline-flex items-center gap-3 bg-[hsl(var(--primary))] px-5 py-4 text-xs font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))] transition hover:bg-[hsl(var(--background))] hover:text-[hsl(var(--foreground))]">Projemi anlatayım <ArrowDownRight size={16} /></Link>
-          <a href={whatsappUrl('Merhaba, Kuşadası bölgesinde bir yapı projem var. Bilgi almak istiyorum.')} target="_blank" rel="noopener noreferrer" data-testid="link-hero-whatsapp" className="focus-ring inline-flex items-center gap-3 border border-[hsl(var(--accent-foreground)/.35)] px-5 py-4 text-xs font-extrabold uppercase tracking-[.12em] transition hover:bg-[hsl(var(--accent-foreground)/.1)]"><MessageCircle size={16} /> WhatsApp’tan yaz</a>
+  return (
+    <section className="relative flex min-h-[92vh] items-center overflow-hidden">
+      <img src={HERO_IMG} alt="Modern villa exterior example" className="absolute inset-0 h-full w-full object-cover" loading="eager" />
+      <div className="absolute inset-0 bg-[hsl(var(--accent))] opacity-40" />
+      <div className="absolute inset-0 architectural-lines opacity-30" />
+      <div className="relative mx-auto max-w-[1240px] px-5 pt-20 pb-24 md:px-8">
+        <p className="font-mono-brand text-[11px] tracking-[.28em] uppercase text-[hsl(var(--accent-foreground))]">2M YAPI MARKET · KUŞADASI</p>
+        <h1 className="mt-6 font-display text-[clamp(2.8rem,8vw,7rem)] leading-[.85] tracking-[-.04em] text-[hsl(var(--background))]">
+          Tadilat, çelık,<br />çatı & <em>havuz</em><br />tek noktada.
+        </h1>
+        <p className="mt-8 max-w-[560px] text-lg leading-8 text-[hsl(var(--background)/.85)]">Materialten çelik konstruksiyona, çatıdan pergolaya — malzeme, usta ve uygulama tek yerden.</p>
+        <div className="mt-10 flex flex-wrap items-center gap-4">
+          <Link href="/iletisim" className="inline-flex items-center gap-3 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Projenizi anlatın <ArrowRight size={16} /></Link>
+          <a href={whatsappUrl('Merhaba, Kuşadası’nda bir proje için bilgi almak istiyorum.')} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border border-[hsl(var(--background)/.4)] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--background))]"><MessageCircle size={16} /> WhatsApp</a>
+        </div>
+        <p className="mt-6 flex items-center gap-3 text-sm text-[hsl(var(--background)/.8)]">
+          <Phone size={15} /> <a href={`tel:${CONTACT.phoneRaw}`} className="underline decoration-[hsl(var(--background)/.4)] underline-offset-2">{CONTACT.phoneDisplay}</a>
+          <span className="opacity-60">·</span>
+          <span className="opacity-80">Kuşadası · Sogucak · Güzelçamılı</span>
+        </p>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- BRAND POSITION ----------------------------- */
+function AboutSection() {
+  return (
+    <section id="hakkımızda" className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
+      <div className="grid gap-10 md:grid-cols-2 md:items-stretch">
+        <div>
+          <p className="eyebrow">01 — MALZEME · USTA · UYGULAMA</p>
+          <h2 className="mt-5 font-display text-5xl leading-[.9] md:text-7xl">Malzeme. Usta.<br /><em>Uygulama.</em><br />Tek muhatap.</h2>
+          <p className="mt-8 max-w-md text-base leading-8 text-[hsl(var(--muted-foreground))]">2M Yapı Market Proje Bianca; yapı malzemesini, güvenilir uygulamayı ve proje çözümünü aynı çatı altında bir araya getirir.</p>
+          <div className="mt-8 flex flex-wrap gap-2">
+            {CONTACT.areas.map((a) => <span key={a} className="border border-[hsl(var(--border))] px-4 py-2 text-sm">{a}</span>)}
+          </div>
+        </div>
+        <div className="relative">
+          <img src={HERO_IMG} alt="Ev yaşadığınız dış görsel" className="aspect-[4/5] w-full object-cover" loading="lazy" />
+          <div className="absolute -left-3 -bottom-3 h-20 w-20 border bg-[hsl(var(--accent))] opacity-30" />
         </div>
       </div>
-      <div className="reveal reveal-delay-2 relative mx-auto w-full max-w-[470px]">
-        <div className="absolute -right-3 -top-3 h-full w-full border border-[hsl(var(--primary)/.5)] md:-right-5 md:-top-5"></div>
-        <div className="relative bg-[hsl(var(--background))] p-5 text-[hsl(var(--foreground))] shadow-[0_25px_70px_rgba(0,0,0,.18)] md:p-7">
-          <div className="mb-6 flex items-center justify-between border-b border-[hsl(var(--border))] pb-4"><span className="font-mono-brand text-[10px] uppercase tracking-[.18em] text-[hsl(var(--muted-foreground))]">PROJE NOTU / 01</span><span className="h-2 w-2 rounded-full bg-[hsl(var(--primary))]"></span></div>
-          <p className="font-display text-4xl leading-none md:text-5xl">Bir fikriniz mi var?<br /><em>Birlikte netleştirelim.</em></p>
-          <div className="mt-8 grid grid-cols-2 border-t border-[hsl(var(--border))] pt-5"><div><p className="font-mono-brand text-[10px] text-[hsl(var(--muted-foreground))]">NEREDE?</p><p className="mt-2 text-sm font-bold">Kuşadası ve çevresi</p></div><div><p className="font-mono-brand text-[10px] text-[hsl(var(--muted-foreground))]">NASIL?</p><p className="mt-2 text-sm font-bold">Malzeme + uygulama</p></div></div>
-          <div className="mt-8 flex items-center gap-3 bg-[hsl(var(--secondary))] p-3"><span className="grid h-9 w-9 place-items-center bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"><Ruler size={17} /></span><span className="text-xs leading-5">İhtiyacınıza göre ilk çerçeveyi<br /><strong>tek bir görüşmede</strong> kuralım.</span></div>
+    </section>
+  );
+}
+
+/* ------------------------- VISUAL SHOWCASE (DEMO) -------------------------- */
+function Showcase() {
+  return (
+    <section id="uygulama" className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
+      <div className="flex items-end justify-between gap-5">
+        <div>
+          <p className="eyebrow">02 — UYGULAMA ALANLARI</p>
+          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Uygulama<br /><em>alanlarımız.</em></h2>
+        </div>
+        <Link href="/hizmetler" className="group inline-flex items-center gap-2 border-b border-[hsl(var(--border))] pb-1 text-xs font-extrabold uppercase tracking-[.13em]">Tüm uygulamaları gör <ArrowRight size={15} /></Link>
+      </div>
+      <div className="mt-12 flex flex-col gap-10">
+        {demoProjects.map((p) => (
+          <article key={p.no} className="grid md:grid-cols-[1.2fr_1fr] items-center gap-8">
+            <Link href="/hizmetler" className="group relative aspect-[4/3] overflow-hidden">
+              <img src={p.image} alt={p.imageAlt} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" />
+              <span className="sr-only">Demo görsel</span>
+              <span className="absolute bottom-3 left-3 bg-[hsl(var(--background)/.85)] px-2 py-1 font-mono-brand text-[9px] uppercase text-[hsl(var(--muted-foreground))]">Demo görseli · </span>
+              <span className="absolute top-3 left-3 font-mono-brand text-xs">{p.no}</span>
+            </Link>
+            <div className="md:pl-6">
+              <p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-[hsl(var(--muted-foreground))]">{p.tags}</p>
+              <h3 className="mt-4 font-display text-4xl md:text-6xl">{p.title}</h3>
+              <p className="mt-3 text-sm text-[hsl(var(--muted-foreground))]">{p.place} · örnek göster</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+/* -------------------------- SERVICES (interactive) ------------------------- */
+function ServicesSection() {
+  const [activeId, setActiveId] = useState(services[0].id);
+  const active = services.find((s) => s.id === activeId) || services[0];
+  return (
+    <section className="bg-[hsl(var(--foreground))] text-[hsl(var(--background))]">
+      <div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
+        <p className="eyebrow text-[hsl(var(--background)/.5)]">03 — HİZMETLER</p>
+        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">İhtiyacınız neyse,<br /><em>oradan başlayalım.</em></h2>
+        <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_1fr]">
+          <div className="border-t border-[hsl(var(--background)/.16)]">
+            {services.slice(0, 10).map((s, i) => {
+              const isAct = s.id === activeId;
+              const SIcon = s.icon;
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  onMouseEnter={() => setActiveId(s.id)}
+                  onFocus={() => setActiveId(s.id)}
+                  className={`flex w-full items-center justify-between gap-4 border-b border-[hsl(var(--background)/.16)] py-5 text-left ${isAct ? 'text-[hsl(var(--primary))]' : 'hover:text-[hsl(var(--background)/.7)]'}`}
+                >
+                  <span className="flex items-center gap-4">
+                    <span className="font-mono-brand text-xs opacity-60">{String(i + 1).padStart(2, "0")}</span>
+                    <SIcon size={18} />
+                    <span className="text-xl font-bold tracking-[-.02em]">{s.name}</span>
+                  </span>
+                  <ArrowRight size={18} className={`shrink-0 transition ${isAct ? 'opacity-100' : 'opacity-30'}`} />
+                </button>
+              );
+            })}
+          </div>
+          <div className="relative overflow-hidden">
+            <img key={active.id} src={active.image} alt={active.imageAlt} className="aspect-[4/5] w-full object-cover transition-opacity duration-500" loading="lazy" />
+            <div className="absolute bottom-0 left-0 right-0 bg-[hsl(var(--foreground)/.7)] p-5 backdrop-blur">
+              <p className="text-xs text-[hsl(var(--primary))]">{CATEGORY_LABELS[active.category]}</p>
+              <h3 className="mt-1 font-display text-3xl">{active.name}</h3>
+              <p className="mt-2 text-sm leading-6 opacity-80">{active.short}</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div className="relative mx-auto flex max-w-[1240px] items-center gap-4 px-5 pb-7 font-mono-brand text-[10px] uppercase tracking-[.18em] text-[hsl(var(--accent-foreground)/.5)] md:px-8"><span className="h-px w-12 bg-current"></span> Yerel erişim · net iletişim · birlikte çözüm</div>
-  </section>;
+    </section>
+  );
 }
 
-function ServicePreview() {
-  return <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
-    <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><div><p className="eyebrow">01 — HİZMETLER</p><h2 data-testid="heading-services-preview" className="mt-4 max-w-xl font-display text-5xl leading-[.92] md:text-7xl">İhtiyacınız neyse,<br /><em>oradan başlayalım.</em></h2></div><Link href="/hizmetler" data-testid="link-all-services" className="focus-ring group inline-flex items-center gap-3 pb-1 text-xs font-extrabold uppercase tracking-[.13em]">Tüm hizmetleri gör <ArrowRight size={16} className="transition group-hover:translate-x-1" /></Link></div>
-    <div className="mt-12 grid border-t border-[hsl(var(--border))] sm:grid-cols-2 lg:grid-cols-3">
-      {services.slice(0, 6).map((service, index) => { const Icon = service.icon; return <Link href={`/${service.slug}`} key={service.slug} data-testid={`card-service-${service.slug}`} className="hover-lift group relative border-b border-r border-[hsl(var(--border))] p-6 md:p-7"><span className="font-mono-brand text-[10px] text-[hsl(var(--muted-foreground))]">0{index + 1}</span><span className={`service-icon service-icon-${service.accent}`}><Icon size={20} /></span><h3 className="mt-12 text-xl font-bold tracking-[-.03em]">{service.name}</h3><p className="mt-3 max-w-[260px] text-sm leading-6 text-[hsl(var(--muted-foreground))]">{service.description}</p><span className="mt-7 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.15em] opacity-0 transition group-hover:opacity-100">Detay <ArrowRight size={13} /></span></Link>; })}
-    </div>
-  </section>;
+/* --------------------------- MATERIAL / CRAFT ------------------------------ */
+function MaterialCraft() {
+  const rows = [
+    ['Malzeme', 'Doğru yapı ve yenileme malzeme tek kaynaktan.'],
+    ['Usta', 'İşini doğru yapan ekip, saha içinde.'],
+    ['Uygulama', 'Planlı, düzenli ve bitmiş iş; anahtar teslim.'],
+  ];
+  return (
+    <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
+      <div className="grid gap-10 md:grid-cols-[1fr_1.1fr] md:items-start">
+        <div>
+          <p className="eyebrow">04 — AVANTAJ</p>
+          <h2 className="mt-4 font-display text-5xl leading-[.88] md:text-7xl">Malzeme. Usta.<br /><em>Uygulama.</em><br />Tek muhatap.</h2>
+        </div>
+        <div className="border-t border-[hsl(var(--border))]">
+          {rows.map(([t, d]) => (
+            <div key={t} className="grid gap-2 border-b border-[hsl(var(--border))] py-6 sm:grid-cols-[160px_1fr]">
+              <h3 className="text-xl font-bold text-[hsl(var(--primary))]">{t}</h3>
+              <p className="text-sm leading-7 text-[hsl(var(--muted-foreground))]">{d}</p>
+            </div>
+          ))}
+          <a href={whatsappUrl('Merhaba, malzeme ve uygulama için bilgi almak istiyorum.')} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 border border-[hsl(var(--primary))] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">WhatsApp’tan yaz <MessageCircle size={15} /></a>
+        </div>
+      </div>
+    </section>
+  );
+}
+/* ------------------------------- PROCESS ----------------------------------- */
+function ProcessSection() {
+  return (
+    <section className="bg-[hsl(var(--secondary))]">
+      <div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
+        <div className="grid gap-10 md:grid-cols-2 md:items-center">
+          <div>
+            <p className="eyebrow">05 — YOÖTE</p>
+            <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Karmaşayı<br /><em>azaltırız.</em></h2>
+            <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Net süreç, tek muhatap. Kapsam planından sahanın içine kadar adım adım çalışıyoruz.</p>
+          </div>
+          <div className="border-t border-[hsl(var(--border))]">
+            {processSteps.map(([num, title, text]) => (
+              <article key={num} className="grid gap-3 border-b border-[hsl(var(--border))] py-6 sm:grid-cols-[60px_1fr]">
+                <span className="font-mono-brand text-sm text-[hsl(var(--primary))]">{num}</span>
+                <div><h3 className="text-2xl font-bold tracking-[-.04em]">{title}</h3><p className="mt-2 text-sm leading-7 text-[hsl(var(--muted-foreground))]">{text}</p></div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }
 
-function MethodSection() {
-  const steps = [['01', 'Dinliyoruz', 'İhtiyacınızı, kullanımınızı ve bulunduğunuz yeri anlamadan öneri sunmuyoruz.'], ['02', 'Çerçeveliyoruz', 'Malzeme, iş kapsamı ve uygulama adımlarını anlaşılır bir plan haline getiriyoruz.'], ['03', 'Birlikte ilerliyoruz', 'Karar verdiğinizde, doğru ekip ve doğru malzeme ile süreci takip ediyoruz.']];
-  return <section className="bg-[hsl(var(--secondary))]"><div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28"><div className="grid gap-12 md:grid-cols-[.8fr_1.2fr]"><div><p className="eyebrow">02 — YAKLAŞIMIMIZ</p><h2 data-testid="heading-method" className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Karmaşayı<br /><em>azaltırız.</em></h2><p className="mt-7 max-w-sm text-sm leading-7 text-[hsl(var(--muted-foreground))]">İyi bir iş, sadece iyi malzemeyle değil; doğru sorular, açık kapsam ve düzenli iletişimle tamamlanır.</p></div><div className="grid gap-0 border-t border-[hsl(var(--border))]">{steps.map(([num, title, text]) => <article key={num} data-testid={`article-method-${num}`} className="grid gap-4 border-b border-[hsl(var(--border))] py-7 sm:grid-cols-[70px_1fr]"><span className="font-mono-brand text-xs text-[hsl(var(--primary))]">{num}</span><div><h3 className="text-2xl font-bold tracking-[-.04em]">{title}</h3><p className="mt-2 max-w-lg text-sm leading-7 text-[hsl(var(--muted-foreground))]">{text}</p></div></article>)}</div></div></div></section>;
+/* ------------------------- BEFORE / AFTER ------------------------- */
+function BeforeAfterSection() {
+  return (
+    <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
+      <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center">
+        <div>
+          <p className="eyebrow">06 — ÖNCE & SONRA</p>
+          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Değişimi<br /><em>görün.</em></h2>
+          <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Şimdilik demo görseller kullanıyoruz; gerçek 2M proje fotoğrafları geldiğinde bu bölüm onlarla güncellenecek. Slider’ı sürükleyerek karşılaştırın.</p>
+          <Link href="/iletisim" className="mt-6 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Keşif iste <ArrowRight size={14} /></Link>
+        </div>
+        <BeforeAfter data={beforeAfter} />
+      </div>
+    </section>
+  );
 }
 
-function AreasSection() {
-  return <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28"><div className="grid gap-10 md:grid-cols-[1fr_1.4fr] md:items-end"><div><p className="eyebrow">03 — YAKININIZDA</p><h2 data-testid="heading-areas" className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Aynı kıyıda,<br /><em>aynı özenle.</em></h2></div><div><p className="max-w-xl text-lg leading-8 text-[hsl(var(--muted-foreground))]">Kuşadası’nın mahallelerini, yazlık ritmini ve yapı ihtiyaçlarını yerel bir partner olmanın sorumluluğuyla ele alıyoruz.</p><div className="mt-8 flex flex-wrap gap-2">{areas.map((area, i) => <span key={area} data-testid={`badge-area-${i}`} className="border border-[hsl(var(--border))] px-4 py-3 text-sm font-bold">{area}</span>)}</div></div></div></section>;
+/* ------------------------------ STORE / MAP -------------------------------- */
+function StoreSection() {
+  const gm = 'https://www.google.com/maps/dir/?api=1&destination=Ku%C5%9Fadas%C4%B1+Davutlar+Yolu+75';
+  return (
+    <section className="bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]">
+      <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-20 md:grid-cols-2 md:items-center md:px-8 md:py-28">
+        <div>
+          <p className="font-mono-brand text-[11px] uppercase tracking-[.25em] opacity-70">07 — BİZ VEKİ</p>
+          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Bizi yerinde<br /><em>ziyaret edin.</em></h2>
+          <p className="mt-6 max-w-md text-sm leading-7 opacity-80">2M Yapı Market Proje Bianca · TNR Corner Loft</p>
+          <p className="mt-2 text-sm">Kuşadası Davutlar Yolu No:75, Soğucak</p>
+          <p className="text-sm">09400 Kuşadası / Aydın</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a href={gm} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary-foreground))]">Yol tarif al <ArrowRight size={14} /></a>
+            <a href={`tel:${CONTACT.phoneRaw}`} className="inline-flex items-center gap-2 border border-[hsl(var(--accent-foreground)/.4)] px-5 py-3 text-xs font-bold uppercase tracking-widest">Hemen ara <Phone size={14} /></a>
+          </div>
+        </div>
+        <div className="aspect-square min-h-[280px] border border-[hsl(var(--accent-foreground)/.2)]">
+          <iframe title="2M Yapı Market konum" src="https://maps.google.com/maps?q=Ku%C5%9Fadas%C4%B1%20Davutlar%20Yolu%2075&t=&z=15&output=embed" className="h-full w-full border-0 grayscale" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+        </div>
+      </div>
+    </section>
+  );
+}
+/* --------------------------------- FAQ ------------------------------------- */
+function FaqSection() {
+  const [open, setOpen] = useState(0);
+  return (
+    <section className="mx-auto max-w-[900px] px-5 py-20 md:py-28">
+      <div className="text-center">
+        <p className="eyebrow">08 — MERAK</p>
+        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Aklınızdaki<br /><em>sorular.</em></h2>
+      </div>
+      <div className="mt-12 border-t border-[hsl(var(--border))]">
+        {faqItems.map(([q, a], i) => (
+          <div key={q} className="border-b border-[hsl(var(--border))]">
+            <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full items-center justify-between gap-5 py-6 text-left text-lg font-bold">
+              <span>{q}</span><ChevronDown size={20} className={`shrink-0 transition ${open === i ? 'rotate-180 text-[hsl(var(--primary))]' : ''}`} />
+            </button>
+            {open === i && <p className="max-w-2xl pb-6 text-sm leading-7 text-[hsl(var(--muted-foreground))]">{a}</p>}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
 }
 
-function QuoteSection() {
-  return <section id="quote" className="bg-[hsl(var(--secondary))]"><div className="mx-auto grid max-w-[1240px] gap-12 px-5 py-20 md:grid-cols-[.85fr_1.15fr] md:items-start md:px-8 md:py-28"><div className="md:sticky md:top-8"><p className="eyebrow">04 — KONUŞALIM</p><h2 data-testid="heading-home-quote" className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Bir form,<br /><em>çok netlik.</em></h2><p className="mt-7 max-w-sm text-sm leading-7 text-[hsl(var(--muted-foreground))]">Projenizin bütün detaylarını ilk mesajda bilmek zorunda değilsiniz. Bildiklerinizi yazın, doğru sorularla devam edelim.</p><div className="mt-8 flex gap-3 text-[hsl(var(--primary))]"><span className="grid h-9 w-9 place-items-center border border-current"><CircleCheck size={16} /></span><span className="max-w-[220px] text-xs font-bold leading-5 text-[hsl(var(--foreground))]">Talebiniz ekibe ulaşır, siz tercih ettiğiniz kanaldan dönüş beklersiniz.</span></div></div><div className="bg-[hsl(var(--background))] p-5 md:p-8"><div className="mb-7 flex items-center justify-between border-b border-[hsl(var(--border))] pb-5"><h3 className="font-display text-3xl">Keşif talebi</h3><span className="font-mono-brand text-[10px] text-[hsl(var(--muted-foreground))]">FORM / 02</span></div><QuoteForm /></div></div></section>;
+/* ------------------------------ FINAL CTA --------------------------------- */
+function FinalCta() {
+  return (
+    <section className="bg-[hsl(var(--primary))] text-center text-[hsl(var(--primary-foreground))] px-5 py-16 md:py-24">
+      <p className="font-mono-brand text-[11px] uppercase tracking-[.26em] opacity-70">09 — BAŞLAY</p>
+      <h2 className="mt-5 font-display text-5xl leading-[.9] md:text-7xl">Bir projeniz mi var?<br /><em>Başlayalım.</em></h2>
+      <p className="mx-auto mt-5 max-w-md text-sm leading-7 opacity-80">Birkaç cümleyle başlayalım; gerisini birlikte netleştiririz.</p>
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <Link href="/iletisim" className="inline-flex items-center gap-3 bg-[hsl(var(--foreground))] px-6 py-4 text-xs font-bold uppercase tracking-[.13em] text-[hsl(var(--background))]">Projenizi anlatın <ArrowRight size={16} /></Link>
+        <a href={whatsappUrl('Merhaba, proje için başlayalmak istiyorum.')} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border border-[hsl(var(--primary-foreground)/.4)] px-6 py-4 text-xs font-bold uppercase tracking-[.13em]"><MessageCircle size={16} /> WhatsApp’tan yaz</a>
+      </div>
+      <a href={`tel:${CONTACT.phoneRaw}`} className="mt-6 inline-flex items-center gap-2 text-sm underline underline-offset-4">{CONTACT.phoneDisplay}</a>
+    </section>
+  );
 }
 
-function PlaceholderProjects() {
-  const projects = [['01', 'Konut yenileme', 'Kuşadası', 'İç mekân'], ['02', 'Dış alan fikri', 'Davutlar', 'Pergola / havuz'], ['03', 'Yapı çözümü', 'Soğucak', 'Prefabrik / çelik']];
-  return <section className="bg-[hsl(var(--foreground))] text-[hsl(var(--background))]"><div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28"><div className="flex flex-col justify-between gap-4 md:flex-row md:items-end"><div><p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-[hsl(var(--background)/.5)]">04 — PROJE ALANI</p><h2 data-testid="heading-projects" className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Buraya sizin<br /><em>projeniz gelebilir.</em></h2></div><p className="max-w-xs text-sm leading-6 text-[hsl(var(--background)/.6)]">Yakında gerçek uygulama hikâyeleriyle güncellenecek. Şimdilik fikirlerinize yer açıyoruz.</p></div><div className="mt-12 grid gap-3 md:grid-cols-3">{projects.map(([num, title, location, service]) => <div key={num} data-testid={`card-project-placeholder-${num}`} className="group min-h-[270px] border border-[hsl(var(--background)/.2)] p-5 transition hover:border-[hsl(var(--primary))]"><div className="flex justify-between font-mono-brand text-[10px] text-[hsl(var(--background)/.5)]"><span>{num} / YER AYRILDI</span><ArrowDownRight size={15} /></div><div className="mt-24"><p className="text-[10px] uppercase tracking-widest text-[hsl(var(--primary))]">{service}</p><h3 className="mt-2 text-2xl font-bold">{title}</h3><p className="mt-2 text-xs text-[hsl(var(--background)/.55)]">{location} · Görsel alanı yakında</p></div></div>)}</div></div></section>;
-}
-
-function FAQ() {
-  const [active, setActive] = useState(0);
-  return <section className="mx-auto max-w-[900px] px-5 py-20 md:py-28"><div className="text-center"><p className="eyebrow">05 — MERAK EDİLENLER</p><h2 data-testid="heading-faq" className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Aklınızdaki<br /><em>sorular.</em></h2></div><div className="mt-12 border-t border-[hsl(var(--border))]">{faqItems.map(([question, answer], index) => <div key={question} className="border-b border-[hsl(var(--border))]"><button type="button" aria-expanded={active === index} data-testid={`button-faq-${index}`} onClick={() => setActive(active === index ? -1 : index)} className="focus-ring flex w-full items-center justify-between gap-5 py-6 text-left text-base font-bold"><span>{question}</span><ChevronDown size={18} className={`shrink-0 transition-transform ${active === index ? 'rotate-180 text-[hsl(var(--primary))]' : ''}`} /></button>{active === index && <p data-testid={`text-faq-answer-${index}`} className="max-w-2xl pb-6 text-sm leading-7 text-[hsl(var(--muted-foreground))]">{answer}</p>}</div>)}</div></section>;
-}
-
+/* --------------------------------- HOME ----------------------------------- */
 function Home() {
-  return <><Meta title="2M Yapı Market | Kuşadası Yapı ve Proje Çözümleri" description="Kuşadası, Soğucak, Davutlar ve Güzelçamlı’da malzeme, uygulama ve proje hizmetlerini tek konuşmada buluşturun." /><Header /><main><Hero /><ServicePreview /><MethodSection /><AreasSection /><QuoteSection /><PlaceholderProjects /><FAQ /><section className="bg-[hsl(var(--primary))] px-5 py-16 text-center text-[hsl(var(--primary-foreground))] md:py-24"><h2 data-testid="heading-home-cta" className="font-display text-5xl leading-[.9] md:text-7xl">Projenizi<br /><em>anlatın.</em></h2><p className="mx-auto mt-5 max-w-md text-sm leading-6 opacity-80">İlk adım için uzun bir dosyaya gerek yok. Birkaç cümle yeter.</p><Link href="/iletisim" data-testid="link-home-final-cta" className="mt-8 inline-flex items-center gap-3 bg-[hsl(var(--foreground))] px-6 py-4 text-xs font-bold uppercase tracking-[.13em] text-[hsl(var(--background))] transition hover:bg-[hsl(var(--accent))]">Talep formuna git <ArrowRight size={16} /></Link></section></main><Footer /><FloatingWhatsApp /><MobileContactBar /></>;
+  return (
+    <>
+      <Meta
+        title="2M Yapı Market | Kuşadası Yapı ve Tadilat"
+        description="Kuşadası, Soğucak, Davuzlar ve Güzelçamlı’da malzeme, uygulama ve proje hizmetleri tek noktada."
+      />
+      <main>
+        <Hero />
+        <AboutSection />
+        <Showcase />
+        <ServicesSection />
+        <ProcessSection />
+        <BeforeAfterSection />
+        <MaterialCraft />
+        <StoreSection />
+        <FaqSection />
+        <FinalCta />
+      </main>
+    </>
+  );
 }
-
-function ServicesPage() {
-  const [category, setCategory] = useState('Tümü');
-  const categories = ['Tümü', 'İç mekân', 'Dış yapı', 'Yapısal', 'Teknik', 'Dış alan'];
-  const filtered = category === 'Tümü' ? services : services.filter(s => s.category === category);
-  return <><Meta title="Hizmetler | 2M Yapı Market Kuşadası" description="Tadilat, boya, çatı, çelik, prefabrik, tesisat ve daha fazlası için Kuşadası hizmet rehberi." /><Header /><main className="mx-auto max-w-[1240px] px-5 py-16 md:px-8 md:py-24"><div className="max-w-3xl"><p className="eyebrow">HİZMET DİZİNİ / 2024</p><h1 data-testid="heading-services" className="mt-5 font-display text-6xl leading-[.86] md:text-8xl">İşin adı ne olursa olsun,<br /><em>bir yerden başlayalım.</em></h1><p className="mt-8 max-w-xl text-base leading-8 text-[hsl(var(--muted-foreground))]">Her hizmet sayfası, ihtiyacınızı daha iyi anlatabilmeniz için bir başlangıç noktası. Detaylar için bize ulaşın.</p></div><div className="mt-14 flex flex-wrap gap-2" role="group" aria-label="Hizmet kategorileri">{categories.map(item => <button type="button" key={item} data-testid={`button-filter-${item.toLowerCase().replaceAll(' ', '-')}`} onClick={() => setCategory(item)} className={`focus-ring border px-4 py-3 text-xs font-bold uppercase tracking-wider transition ${category === item ? 'border-[hsl(var(--accent))] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]' : 'border-[hsl(var(--border))] hover:border-[hsl(var(--primary))]'}`}>{item}</button>)}</div><div className="mt-8 grid border-t border-[hsl(var(--border))] sm:grid-cols-2 lg:grid-cols-3">{filtered.map((service, index) => { const Icon = service.icon; return <Link href={`/${service.slug}`} key={service.slug} data-testid={`card-directory-${service.slug}`} className="hover-lift group border-b border-r border-[hsl(var(--border))] p-6 md:p-8"><div className="flex justify-between"><span className="font-mono-brand text-[10px] text-[hsl(var(--muted-foreground))]">0{index + 1}</span><Icon size={21} className="text-[hsl(var(--primary))]" /></div><p className="mt-14 text-[10px] font-bold uppercase tracking-[.15em] text-[hsl(var(--muted-foreground))]">{service.category}</p><h2 className="mt-2 text-2xl font-bold tracking-[-.04em]">{service.name}</h2><p className="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))]">{service.description}</p><span className="mt-8 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest">Hizmeti incele <ArrowRight size={14} className="transition group-hover:translate-x-1" /></span></Link>; })}</div></main><Footer /><FloatingWhatsApp /><MobileContactBar /></>;
-}
-
-function ContactPage() {
-  return <><Meta title="İletişim ve Keşif | 2M Yapı Market" description="Kuşadası ve çevresindeki yapı, tadilat ve proje ihtiyacınızı 2M Yapı Market’e anlatın. Keşif talebinizi gönderin." /><Header /><main><section className="bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]"><div className="mx-auto grid max-w-[1240px] gap-12 px-5 py-16 md:grid-cols-[.85fr_1.15fr] md:px-8 md:py-24"><div><p className="font-mono-brand text-[10px] uppercase tracking-[.25em] text-[hsl(var(--accent-foreground)/.55)]">İLETİŞİM / İLK ADIM</p><h1 data-testid="heading-contact" className="mt-6 font-display text-6xl leading-[.85] md:text-8xl">Projenizi<br /><em>bize bırakın.</em></h1><p className="mt-8 max-w-md text-base leading-8 text-[hsl(var(--accent-foreground)/.72)]">Ne yapılacağını, nerede olduğunu ve size nasıl ulaşmamızı istediğinizi yazın. Gerisini konuşarak netleştirelim.</p><div className="mt-10 grid gap-4 border-t border-[hsl(var(--accent-foreground)/.18)] pt-6 text-sm"><a href={whatsappUrl('Merhaba, keşif talebi oluşturmak istiyorum.')} target="_blank" rel="noopener noreferrer" data-testid="link-contact-whatsapp" className="flex items-center gap-3 hover:text-[hsl(var(--primary))]"><MessageCircle size={18} /> WhatsApp’tan doğrudan yazın <ArrowRight size={14} /></a>{PHONE ? <a href={`tel:${PHONE}`} data-testid="link-contact-phone" className="flex items-center gap-3 hover:text-[hsl(var(--primary))]"><Phone size={18} /> Telefonla görüşün <ArrowRight size={14} /></a> : <span data-testid="text-contact-phone-pending" className="flex items-center gap-3 text-[hsl(var(--accent-foreground)/.55)]"><Phone size={18} /> Telefon bilgisi yakında eklenecek</span>}<span data-testid="text-contact-address" className="flex items-start gap-3 text-[hsl(var(--accent-foreground)/.65)]"><MapPin size={18} className="mt-0.5 shrink-0" /> Kuşadası · Soğucak · Davutlar · Güzelçamlı</span></div></div><div className="bg-[hsl(var(--background))] p-5 text-[hsl(var(--foreground))] md:p-8"><div className="mb-7 flex items-center justify-between"><h2 className="font-display text-3xl">Kısa bir not yeter.</h2><span className="font-mono-brand text-[10px] text-[hsl(var(--muted-foreground))]">FORM / 01</span></div><QuoteForm compact /></div></div></section></main><Footer /><FloatingWhatsApp /><MobileContactBar /></>;
-}
-
-function ServicePage() {
+/* ----------------------------- SERVICE DETAIL ------------------------------ */
+function ServiceDetail() {
   const [, params] = useRoute('/:slug');
-  const service = services.find(item => item.slug === params?.slug) || services[0];
-  const Icon = service.icon;
-  return <><Meta title={`${service.name} | 2M Yapı Market Kuşadası`} description={`${service.name} hizmeti için Kuşadası ve çevresinde malzeme, keşif ve uygulama çözümleri. 2M Yapı Market’e ulaşın.`} /><Header /><main><section className="bg-[hsl(var(--secondary))]"><div className="mx-auto max-w-[1240px] px-5 py-16 md:px-8 md:py-24"><Link href="/hizmetler" data-testid="link-service-breadcrumb" className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.15em] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]"><ArrowRight size={13} className="rotate-180" /> Hizmetler</Link><div className="mt-14 grid gap-10 md:grid-cols-[1fr_.8fr] md:items-end"><div><span data-testid="icon-service-detail" className="grid h-14 w-14 place-items-center bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"><Icon size={26} /></span><p className="eyebrow mt-8">{service.category} / KUŞADASI VE ÇEVRESİ</p><h1 data-testid="heading-service-detail" className="mt-5 max-w-3xl font-display text-7xl leading-[.84] md:text-9xl">{service.name}</h1></div><p data-testid="text-service-detail-description" className="max-w-md text-lg leading-8 text-[hsl(var(--muted-foreground))]">{service.description} İhtiyacınızı ve alanınızı anlatın; kapsamı birlikte netleştirelim.</p></div></div></section><section className="mx-auto grid max-w-[1240px] gap-12 px-5 py-20 md:grid-cols-[.8fr_1.2fr] md:px-8 md:py-28"><div><p className="eyebrow">BU SAYFA BİR BAŞLANGIÇ</p><h2 className="mt-4 font-display text-5xl leading-[.9]">Doğru sorular,<br /><em>temiz bir plan.</em></h2></div><div><p className="max-w-xl text-base leading-8 text-[hsl(var(--muted-foreground))]">Her yapı ihtiyacı kendine özgü. Kullanım amacı, mevcut durum, alan ve zaman planı gibi detaylar önerinin temelini oluşturur. Hazır bir paket yerine, size uyan çözümü konuşalım.</p><div className="mt-9 grid gap-3 sm:grid-cols-2"><div className="border-l-2 border-[hsl(var(--primary))] bg-[hsl(var(--secondary))] p-5"><p className="font-bold">Alanı anlayalım</p><p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">Nerede, nasıl kullanılacak?</p></div><div className="border-l-2 border-[hsl(var(--accent))] bg-[hsl(var(--secondary))] p-5"><p className="font-bold">Kapsamı netleştirelim</p><p className="mt-2 text-sm leading-6 text-[hsl(var(--muted-foreground))]">Malzeme ve uygulama adımları.</p></div></div><Link href="/iletisim" data-testid="link-service-quote" className="mt-9 inline-flex items-center gap-3 bg-[hsl(var(--primary))] px-5 py-4 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary-foreground))] transition hover:bg-[hsl(var(--accent))]">Bu hizmet için yazın <ArrowRight size={15} /></Link></div></section><section className="bg-[hsl(var(--foreground))] px-5 py-16 text-center text-[hsl(var(--background))] md:py-20"><p className="font-mono-brand text-[10px] uppercase tracking-[.2em] opacity-50">BİR SONRAKİ ADIM</p><h2 className="mt-4 font-display text-5xl">Sorunuzu birlikte<br /><em>çözelim.</em></h2><a href={whatsappUrl(`Merhaba, ${service.name} hakkında bilgi almak istiyorum.`)} target="_blank" rel="noopener noreferrer" data-testid="link-service-whatsapp" className="mt-7 inline-flex items-center gap-3 border border-[hsl(var(--background)/.35)] px-5 py-4 text-xs font-bold uppercase tracking-widest hover:bg-[hsl(var(--background)/.1)]"><MessageCircle size={16} /> WhatsApp’tan yazın</a></section></main><Footer /><FloatingWhatsApp /><MobileContactBar /></>;
+  const service = services.find((s) => s.slug === params?.slug) || services[0];
+  return (
+    <>
+      <Meta title={service.seoTitle} description={service.seoDesc} path={`/${service.slug}`} service={service} />
+      <section className="bg-[hsl(var(--secondary))] px-5 py-16 md:px-8 md:py-24">
+        <div className="mx-auto max-w-[1240px]">
+          <Link href="/hizmetler" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[hsl(var(--muted-foreground))]"><ArrowRight size={14} className="rotate-180" /> Hizmetler</Link>
+          <div className="mt-12 grid gap-10 lg:grid-cols-2 items-end">
+            <div>
+              <p className="eyebrow">{CATEGORY_LABELS[service.category]} / KUŞADASI</p>
+              <h1 className="mt-4 font-display text-6xl leading-[.88] md:text-8xl">{service.name}</h1>
+              <p className="mt-6 max-w-md text-lg leading-8 text-[hsl(var(--muted-foreground))]">{service.short}</p>
+            </div>
+            <p className="max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">{service.text}</p>
+          </div>
+        </div>
+      </section>
+      <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8">
+        <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr]">
+          <div className="relative aspect-[4/3] overflow-hidden">
+            <img src={service.image} alt={service.imageAlt} className="h-full w-full object-cover" loading="lazy" />
+            <span className="absolute bottom-3 left-3 bg-[hsl(var(--background)/.85)] px-2 py-1 font-mono-brand text-[9px] uppercase text-[hsl(var(--muted-foreground))]">Demo görsel</span>
+          </div>
+          <div className="border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
+            <p className="eyebrow">Keşif al</p>
+            <h2 className="mt-4 font-display text-4xl">{service.name}</h2>
+            <a href={whatsappUrl(service.whatsapp)} target="_blank" rel="noopener noreferrer" className="mt-5 flex items-center justify-center gap-2 bg-[hsl(var(--primary))] px-4 py-3 text-xs font-extrabold uppercase tracking-widest text-[hsl(var(--primary-foreground))]"><MessageCircle size={15} /> WhatsApp keşif</a>
+            <a href={`tel:${CONTACT.phoneRaw}`} className="mt-3 flex items-center justify-center gap-2 border border-[hsl(var(--border))] px-4 py-3 text-xs font-bold uppercase tracking-widest"><Phone size={15} /> {CONTACT.phoneDisplay}</a>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+/* ----------------------------- SERVICES PAGE ------------------------------- */
+function ServicesPage() {
+  const [cat, setCat] = useState('all');
+  const cats = ['all', 'interior', 'exterior', 'structural', 'technical', 'outdoor'];
+  const list = cat === 'all' ? services : services.filter((s) => s.category === cat);
+  return (
+    <>
+      <Meta title="Hizmetler | 2M Yapı Market" description="Tadilat, boya, çatı, çelik, prefabrik ve havuz hizmetleri için Kuşadası rehberi." path="/hizmetler" />
+      <main className="mx-auto max-w-[1240px] px-5 py-14 md:px-8 md:py-24">
+        <p className="eyebrow">HİZMETLER</p>
+        <h1 className="mt-4 font-display text-6xl leading-[.88] md:text-8xl">Yapı, tadilat<br /> & <em>uygulama.</em></h1>
+        <div className="mt-10 flex flex-wrap gap-2" role="group" aria-label="Kategori">
+          {cats.map((c) => (
+            <button key={c} type="button" onClick={() => setCat(c)} className={`border px-4 py-3 text-xs font-bold uppercase tracking-wider ${cat === c ? 'border-[hsl(var(--accent))] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]' : 'border-[hsl(var(--border))] hover:border-[hsl(var(--primary))]'}`}>{c === 'all' ? 'Tümü' : CATEGORY_LABELS[c as (typeof services)[0]['category']]}</button>
+          ))}
+        </div>
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {list.map((s, i) => {
+            const SIcon = s.icon;
+            return (
+              <Link key={s.id} href={`/${s.slug}`} className="group overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <img src={s.image} alt={s.imageAlt} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
+                  <span className="absolute left-3 top-3 font-mono-brand text-xs opacity-70">{String(i + 1).padStart(2, "0")}</span>
+                </div>
+                <div className="p-5">
+                  <p className="flex items-center gap-2 text-xs uppercase tracking-widest text-[hsl(var(--muted-foreground))]"><SIcon size={15} /> {CATEGORY_LABELS[s.category]}</p>
+                  <h2 className="mt-2 text-2xl font-bold tracking-[-.03em]">{s.name}</h2>
+                  <p className="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))]">{s.short}</p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </main>
+    </>
+  );
 }
 
+/* ------------------------------ CONTACT PAGE -------------------------------- */
+function ContactPage() {
+  return (
+    <>
+      <Meta title="İletişim & Keşif | 2M Yapı Market" description="Kuşadası’da yapı, tadilat ve proje ihtiyacı için keşif talebi gönderin." path="/iletisim" />
+      <main className="mx-auto max-w-[1240px] px-5 py-16 md:px-8 md:py-24">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+          <div>
+            <p className="eyebrow">İLETİŞİM / İLK ADIM</p>
+            <h1 className="mt-4 font-display text-6xl leading-[.85] md:text-8xl">Projenizi<br /><em>bize bırakın.</em></h1>
+            <p className="mt-6 max-w-md text-base leading-8 text-[hsl(var(--muted-foreground))]">Ne yapılacağını, nerede olduğunu yazın. Kapsamı birlikte netleştiririz.</p>
+            <div className="mt-10 grid gap-4 border-t border-[hsl(var(--border))] pt-6 text-sm">
+              <a href={`tel:${CONTACT.phoneRaw}`} className="flex items-center gap-3"><Phone size={18} className="text-[hsl(var(--primary))]" /> {CONTACT.phoneDisplay}</a>
+              <a href={whatsappUrl('Merhaba, keşif talebi oluşturmak istiyorum.')} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3"><MessageCircle size={18} className="text-[hsl(var(--primary))]" /> WhatsApp’tan yaz</a>
+              <p className="flex items-start gap-3"><MapPin size={18} className="mt-1 shrink-0 text-[hsl(var(--primary))]" /> Kuşadası Davutlar Yolu No:75 · Soğucak<br />09400 Kuşadası / Aydın</p>
+            </div>
+          </div>
+          <div className="bg-[hsl(var(--card))] p-6 md:p-8">
+            <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] text-[hsl(var(--muted-foreground))]">KEŞİF TALEBİ</p>
+            <div className="mt-6"><QuoteForm /></div>
+          </div>
+        </div>
+      </main>
+    </>
+  );
+}
+/* -------------------------------- ROUTER ----------------------------------- */
 function Router() {
-  return <Switch><Route path="/" component={Home} /><Route path="/hizmetler" component={ServicesPage} /><Route path="/iletisim" component={ContactPage} />{services.map(service => <Route key={service.slug} path={`/${service.slug}`} component={ServicePage} />)}<Route component={NotFound} /></Switch>;
+  return (
+    <Switch>
+      <Route path="/" component={Home} />
+      <Route path="/hizmetler" component={ServicesPage} />
+      <Route path="/iletisim" component={ContactPage} />
+      {services.map((s) => <Route key={s.id} path={`/${s.slug}`} component={ServiceDetail} />)}
+      <Route component={NotFound} />
+    </Switch>
+  );
 }
 
 function App() {
-  return <QueryClientProvider client={queryClient}><TooltipProvider><div className="site-noise min-h-[100dvh]"><ErrorBoundary><Router /></ErrorBoundary></div><Toaster /></TooltipProvider></QueryClientProvider>;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <div className="site-noise min-h-[100dvh]">
+          <Header />
+          <ErrorBoundary><Router /></ErrorBoundary>
+          <Footer />
+          <BottomBar />
+        </div>
+        <Toaster />
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
 }
 
 export default App;
