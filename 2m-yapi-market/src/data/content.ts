@@ -1,47 +1,67 @@
-// Demo showcase + FAQ + process content.
-// All project images are royalty-free demo photos (isDemo:true) that will be
-// replaced with real 2M project photography via this data file when available.
+// Uygulama alanları, SSS ve süreç içerikleri.
+// Görseller stok fotoğraftır (source:'demo'); arayüzde kaynak etiketi gösterilmez
+// ve tamamlanmış 2M işi olarak sunulmaz.
 
 const px = (id: number, w = 1200) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=${w}`;
 
-export interface DemoProject {
+export interface ApplicationArea {
   no: string;
   title: string;
-  place: string;
   tags: string;
   image: string;
   imageAlt: string;
-  isDemo: true;
+  source: 'demo' | 'business';
 }
 
-export const demoProjects: DemoProject[] = [
+export const applicationAreas: ApplicationArea[] = [
   {
     no: '01',
-    title: 'Vila & Tadilat',
-    place: 'Kusadasi',
-    tags: 'Tadilat / Dis Cephe / Pergola',
+    title: 'Tadilat & Yenileme',
+    tags: 'İç mekân · Dekorasyon · Yenileme',
     image: px(1643383),
-    imageAlt: 'Example photo of a villa renovation',
-    isDemo: true,
+    imageAlt: 'Tadilat ve yenileme uygulamasına dair görsel',
+    source: 'demo',
   },
   {
     no: '02',
-    title: 'Celik & Pergola',
-    place: 'Kusadasi',
-    tags: 'Celik / Pergola / Dis mekan',
+    title: 'Çelik Konstrüksiyon',
+    tags: 'Çelik · İmalat · Montaj',
     image: px(280222),
-    imageAlt: 'Example photo of steel work and a pergola',
-    isDemo: true,
+    imageAlt: 'Çelik konstrüksiyon uygulamasına dair görsel',
+    source: 'demo',
   },
   {
     no: '03',
-    title: 'Havuz & Dis mekan',
-    place: 'Kusadasi',
-    tags: 'Havuz / Tadilat / Bahce',
+    title: 'Pergola & Dış Mekân',
+    tags: 'Pergola · Teras · Bahçe',
     image: px(2102587),
-    imageAlt: 'Example photo of a pool and garden space',
-    isDemo: true,
+    imageAlt: 'Pergola ve dış mekân uygulamasına dair görsel',
+    source: 'demo',
+  },
+  {
+    no: '04',
+    title: 'Çatı Sistemleri',
+    tags: 'Çatı · Onarım · Yenileme',
+    image: px(681333),
+    imageAlt: 'Çatı sistemleri uygulamasına dair görsel',
+    source: 'demo',
+  },
+  {
+    no: '05',
+    title: 'Cephe & Mantolama',
+    tags: 'Dış cephe · Mantolama · Boya',
+    image: px(259588),
+    imageAlt: 'Dış cephe ve mantolama uygulamasına dair görsel',
+    source: 'demo',
+  },
+  {
+    no: '06',
+    title: 'Havuz Uygulamaları',
+    tags: 'Havuz · Yenileme · Dış alan',
+    image: px(1080721),
+    imageAlt: 'Havuz uygulamasına dair görsel',
+    source: 'demo',
   },
 ];
 
@@ -52,21 +72,61 @@ export interface BeforeAfter {
 }
 
 export const beforeAfter: BeforeAfter = {
-  label: 'Tadilat obscured',
-  before: px(106399, 900),
+  label: 'Yenileme',
+  before: px(106400, 900),
   after: px(106399, 900),
 };
 
 export const processSteps: [string, string, string][] = [
-  ['01', 'Dienes', 'We start by listening to the work you want and the space it sits in.'],
-  ['02', 'Plan', 'Materials, scope and application are set out in a clear plan and quote.'],
-  ['03', 'Build', 'Our team applies the work in order, and we hand over a clean result.'],
+  ['01', 'Dinliyoruz', 'Yapılacak işi, kullanım amacını ve beklentinizi anlamakla başlıyoruz.'],
+  ['02', 'Yerinde İnceliyoruz', 'Gerekli durumlarda alanı yerinde değerlendiriyor, uygulama koşullarını netleştiriyoruz.'],
+  ['03', 'Planlıyor ve Tekliflendiriyoruz', 'Malzeme, iş kapsamı ve uygulama adımlarını açık bir plan ve teklif hâline getiriyoruz.'],
+  ['04', 'Uyguluyoruz', 'Planlanan işi uygun ekip ve malzemeyle hayata geçiriyor, süreci düzenli şekilde takip ediyoruz.'],
 ];
 
 export const faqItems: [string, string][] = [
-  ['Do you offer renovation services in Kusadasi?', 'Yes. We work across Kusadasi, Sogucak, Davutlar and Guzelcamli.'],
-  ['Do you do turnkey renovation?', 'Yes. When the scope is agreed, we can handle planning and handover from one point.'],
-  ['Do you work with steel structures?', 'Yes, including pergola frames, mezzanines and other load-bearing steel work.'],
-  ['Can I send photos to get an estimate?', 'Yes. Upload up to five photos in the form or send them by WhatsApp.'],
-  ['Which areas do you cover?', 'Kusadasi, Sogucak, Davutlar and Güzelcamli mainly, and the surrounding area.'],
+  [
+    'Tadilat ve yapı hizmetlerini hangi bölgelerde veriyorsunuz?',
+    'Merkezimiz Kuşadası\'nda olmakla birlikte Ege Bölgesi genelindeki tadilat, yapı ve uygulama taleplerini değerlendiriyoruz. İşin kapsamına ve konumuna göre keşif ve uygulama planlaması yapıyoruz.',
+  ],
+  [
+    'Anahtar teslim tadilat yapıyor musunuz?',
+    'İşin kapsamına göre malzeme, usta ve uygulama süreçlerini birlikte planlayabiliyoruz. Detayları keşif ve ihtiyaç değerlendirmesi sonrasında netleştiriyoruz.',
+  ],
+  [
+    'Çelik konstrüksiyon işleri yapıyor musunuz?',
+    'Evet. İhtiyaca göre çelik konstrüksiyon, imalat ve montaj işleri için çözüm sunuyoruz.',
+  ],
+  [
+    'Fotoğraf göndererek ön bilgi alabilir miyim?',
+    'Evet. WhatsApp üzerinden mevcut alanın ve yapılacak işin fotoğraflarını gönderebilirsiniz. Böylece ilk değerlendirmeyi daha hızlı yapabiliriz.',
+  ],
+  [
+    'Keşif nasıl yapılıyor?',
+    'Önce ihtiyacınızı ve bulunduğunuz bölgeyi öğreniyoruz. Gerekli durumlarda yerinde inceleme yaparak iş kapsamını ve uygulama koşullarını netleştiriyoruz.',
+  ],
+  [
+    'Çatı tamiri ve yenileme yapıyor musunuz?',
+    'Evet. Çatının mevcut durumuna göre bakım, onarım veya yenileme seçeneklerini değerlendiriyoruz.',
+  ],
+  [
+    'Pergola yapımı hizmetiniz var mı?',
+    'Evet. Bahçe, teras ve açık alanlar için ihtiyaca uygun pergola uygulamalarını değerlendiriyoruz.',
+  ],
+  [
+    'Prefabrik ve konteyner uygulamaları yapıyor musunuz?',
+    'Evet. Kullanım amacına ve proje ihtiyacına göre prefabrik ve konteyner yapı seçenekleri sunuyoruz.',
+  ],
+  [
+    'Mantolama ve dış cephe işleri yapıyor musunuz?',
+    'Evet. Dış cephe yenileme, boya ve mantolama uygulamaları hizmetlerimiz arasındadır.',
+  ],
+  [
+    'Elektrik ve sıhhi tesisat hizmetiniz var mı?',
+    'Evet. Tadilat ve yapı işleri kapsamında elektrik ve sıhhi tesisat uygulamalarını da planlayabiliyoruz.',
+  ],
+  [
+    'Havuz yapımı yapıyor musunuz?',
+    'Evet. Yeni havuz yapımı ve mevcut havuzların yenilenmesine yönelik işleri değerlendiriyoruz.',
+  ],
 ];
