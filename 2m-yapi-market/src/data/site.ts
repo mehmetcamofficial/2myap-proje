@@ -58,7 +58,7 @@ export const NAV = [
   { href: '/', label: 'Ana Sayfa' },
   { href: '/hizmetler', label: 'Hizmetler' },
   { href: '/uygulamalar', label: 'Uygulamalar' },
-  { href: '/iletisim', label: '\u0130leti\u015Fim' },
+  { href: '/iletisim', label: 'İletişim' },
 ] as const;
 
 export const whatsappUrl = (message: string) =>

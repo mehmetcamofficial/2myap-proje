@@ -106,14 +106,14 @@ function Meta({
 
 function Mark() {
   return (
-    <Link href="/" className="flex items-center gap-3" aria-label="2M Yap\u0131 Market ana sayfa">
+    <Link href="/" className="flex items-center gap-3" aria-label="2M Yapı Market ana sayfa">
       <span className="relative grid h-10 w-10 place-items-center bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]">
         <span className="absolute inset-[7px] border border-current" />
         <span className="font-mono-brand text-[11px] font-medium">2M</span>
       </span>
       <span className="leading-none">
         <strong className="block text-[15px] tracking-[-.04em]">2M YAPI MARKET</strong>
-        <small className="mt-1 block font-mono-brand text-[9px] tracking-[.22em]">PROJE BIANCA \u00B7 KU\u015EADASI</small>
+        <small className="mt-1 block font-mono-brand text-[9px] tracking-[.22em]">PROJE BIANCA · KUŞADASI</small>
       </span>
     </Link>
   );
@@ -139,7 +139,7 @@ function Header() {
       <header className="sticky top-0 z-50 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/.9)] backdrop-blur-md">
         <div className={`mx-auto flex ${scrolled ? 'h-16' : 'h-20'} max-w-[1240px] items-center justify-between px-5 md:px-8`}>
           <Mark />
-          <nav aria-label="Ana men\u00FC" className="hidden items-center gap-6 md:flex">
+          <nav aria-label="Ana menü" className="hidden items-center gap-6 md:flex">
             {NAV.map((n) => {
               const active = isActive(n.href);
               return (
@@ -155,16 +155,16 @@ function Header() {
           </nav>
           <div className="hidden items-center gap-3 md:flex">
             <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[hsl(var(--accent))] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--accent))] hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))]"><MessageCircle size={15} /> WhatsApp</a>
-            <Link href="/iletisim" className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary-foreground))]">Ke\u015Fif iste <ArrowRight size={15} /></Link>
+            <Link href="/iletisim" className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary-foreground))]">Keşif iste <ArrowRight size={15} /></Link>
           </div>
-          <button type="button" aria-label="Men\u00FC a\u00E7" aria-expanded={open} onClick={() => setOpen(!open)} className="p-2 md:hidden">{open ? <X size={22} /> : <Menu size={22} />}</button>
+          <button type="button" aria-label="Menü aç" aria-expanded={open} onClick={() => setOpen(!open)} className="p-2 md:hidden">{open ? <X size={22} /> : <Menu size={22} />}</button>
         </div>
       </header>
       {open && (
-        <nav aria-label="Mobil men\u00FC" className="fixed inset-0 z-50 flex flex-col justify-between bg-[hsl(var(--foreground))] px-7 py-8 text-[hsl(var(--background))]">
-          <button type="button" aria-label="Men\u00FC kapat" onClick={() => setOpen(false)} className="self-end"><X size={26} /></button>
+        <nav aria-label="Mobil menü" className="fixed inset-0 z-50 flex flex-col justify-between bg-[hsl(var(--foreground))] px-7 py-8 text-[hsl(var(--background))]">
+          <button type="button" aria-label="Menü kapat" onClick={() => setOpen(false)} className="self-end"><X size={26} /></button>
           <div className="flex flex-col gap-2">
-            <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] opacity-60">ANA MEN\u00DC</p>
+            <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] opacity-60">ANA MENÜ</p>
             {NAV.map((n) => {
               const active = isActive(n.href);
               return (
@@ -175,7 +175,7 @@ function Header() {
           <div className="flex flex-col gap-3 py-4">
             <a href={`tel:${CONTACT.phoneRaw}`} className="flex items-center gap-3 text-sm"><Phone size={17} /> {CONTACT.phoneDisplay}</a>
             <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm"><MessageCircle size={17} /> WhatsApp</a>
-            <p className="text-xs opacity-70">Merkez: Ku\u015Fadas\u0131 \u00B7 Hizmet: Ege B\u00F6lgesi</p>
+            <p className="text-xs opacity-70">Merkez: Kuşadası · Hizmet: Ege Bölgesi</p>
           </div>
         </nav>
       )}
@@ -188,14 +188,14 @@ function Footer() {
       <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-14 md:grid-cols-[1.3fr_1fr_1fr_1.2fr] md:px-8">
         <div>
           <Mark />
-          <p className="mt-6 max-w-sm text-sm leading-7 text-[hsl(var(--accent-foreground)/.72)]">Merkezimiz Ku\u015Fadas\u0131\u2019nda. Tadilat, yap\u0131 ve uygulama i\u015Flerini Ege B\u00F6lgesi genelinde tek muhatapta y\u00FCr\u00FCt\u00FCyoruz.</p>
+          <p className="mt-6 max-w-sm text-sm leading-7 text-[hsl(var(--accent-foreground)/.72)]">Merkezimiz Kuşadası’nda. Tadilat, yapı ve uygulama işlerini Ege Bölgesi genelinde tek muhatapta yürütüyoruz.</p>
         </div>
         <div>
-          <p className="font-mono-brand text-[10px] uppercase tracking-[.2em]">K\u0131sayollar</p>
+          <p className="font-mono-brand text-[10px] uppercase tracking-[.2em]">Kısayollar</p>
           <div className="mt-4 grid gap-3 text-sm">
             <Link href="/hizmetler">Hizmetler</Link>
             <Link href="/uygulamalar">Uygulamalar</Link>
-            <Link href="/iletisim">\u0130leti\u015Fim & Ke\u015Fif</Link>
+            <Link href="/iletisim">İletişim & Keşif</Link>
           </div>
         </div>
         <div>
@@ -205,20 +205,20 @@ function Footer() {
           </div>
         </div>
         <div>
-          <p className="font-mono-brand text-[10px] uppercase tracking-[.2em]">\u0130leti\u015Fim</p>
+          <p className="font-mono-brand text-[10px] uppercase tracking-[.2em]">İletişim</p>
           <div className="mt-4 text-sm leading-7 text-[hsl(var(--accent-foreground)/.8)]">
-            <p>2M Yap\u0131 Market Proje Bianca</p>
+            <p>2M Yapı Market Proje Bianca</p>
             <p>TNR Corner Loft</p>
-            <p>Ku\u015Fadas\u0131 Davutlar Yolu No:75</p>
-            <p>So\u011Fucak \u00B7 09400 Ku\u015Fadas\u0131 / AYDIN</p>
+            <p>Kuşadası Davutlar Yolu No:75</p>
+            <p>Soğucak · 09400 Kuşadası / AYDIN</p>
             <a href={`tel:${CONTACT.phoneRaw}`} className="mt-3 inline-block py-1">{CONTACT.phoneDisplay}</a>
             <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="mt-2 flex items-center gap-2 py-1"><MessageCircle size={15} /> WhatsApp</a>
           </div>
         </div>
       </div>
       <div className="mx-auto flex max-w-[1240px] flex-col gap-2 border-t border-[hsl(var(--accent-foreground)/.14)] px-5 py-5 font-mono-brand text-[10px] md:flex-row md:justify-between md:px-8">
-        <span>\u00A9 {SITE.name}</span>
-        <span>Ku\u015Fadas\u0131 merkez \u00B7 T\u00FCm Ege B\u00F6lgesi</span>
+        <span>© {SITE.name}</span>
+        <span>Kuşadası merkez · Tüm Ege Bölgesi</span>
       </div>
     </footer>
   );
@@ -229,7 +229,7 @@ function BottomBar() {
     <div className="fixed inset-x-0 bottom-0 z-45 grid grid-cols-3 border-t border-[hsl(var(--border))] bg-[hsl(var(--card)/.96)] pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
       <a href={`tel:${CONTACT.phoneRaw}`} className="flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-bold uppercase"><Phone size={16} /> Ara</a>
       <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-bold uppercase"><MessageCircle size={16} /> WhatsApp</a>
-      <Link href="/iletisim" className="flex flex-col items-center justify-center gap-1 bg-[hsl(var(--primary))] py-2.5 text-[10px] font-bold uppercase text-[hsl(var(--primary-foreground))]"><ArrowRight size={16} /> Ke\u015Fif iste</Link>
+      <Link href="/iletisim" className="flex flex-col items-center justify-center gap-1 bg-[hsl(var(--primary))] py-2.5 text-[10px] font-bold uppercase text-[hsl(var(--primary-foreground))]"><ArrowRight size={16} /> Keşif iste</Link>
     </div>
   );
 }
@@ -239,23 +239,23 @@ const HERO_IMG = 'https://images.pexels.com/photos/2102587/pexels-photo-2102587.
 function Hero() {
   return (
     <section className="relative flex min-h-[92vh] items-center overflow-hidden">
-      <ServiceImage src={HERO_IMG} alt="Villa ve d\u0131\u015F mek\u00E2n uygulamas\u0131na dair g\u00F6rsel" className="absolute inset-0 h-full w-full object-cover" loading="eager" />
+      <ServiceImage src={HERO_IMG} alt="Villa ve dış mekân uygulamasına dair görsel" className="absolute inset-0 h-full w-full object-cover" loading="eager" />
       <div className="absolute inset-0 bg-[hsl(var(--accent))] opacity-40" />
       <div className="absolute inset-0 architectural-lines opacity-30" />
       <div className="relative mx-auto max-w-[1240px] px-5 pt-20 pb-24 md:px-8">
-        <p className="font-mono-brand text-[11px] tracking-[.28em] uppercase text-[hsl(var(--accent-foreground))]">2M YAPI MARKET PROJE \u00B7 KU\u015EADASI</p>
+        <p className="font-mono-brand text-[11px] tracking-[.28em] uppercase text-[hsl(var(--accent-foreground))]">2M YAPI MARKET PROJE · KUŞADASI</p>
         <h1 className="mt-6 font-display text-[clamp(2.8rem,8vw,7rem)] leading-[.85] tracking-[-.04em] text-[hsl(var(--background))]">
-          Tadilat, \u00E7elik,<br />\u00E7at\u0131 & <em>havuz</em><br />tek noktada.
+          Tadilat, çelik,<br />çatı & <em>havuz</em><br />tek noktada.
         </h1>
-        <p className="mt-8 max-w-[560px] text-lg leading-8 text-[hsl(var(--background)/.85)]">Malzemeden uygulamaya; \u00E7at\u0131, pergola, \u00E7elik ve tadilat i\u015Flerini tek muhatapta y\u00FCr\u00FCt\u00FCyoruz. T\u00FCm Ege B\u00F6lgesi\u2019nde hizmet.</p>
+        <p className="mt-8 max-w-[560px] text-lg leading-8 text-[hsl(var(--background)/.85)]">Malzemeden uygulamaya; çatı, pergola, çelik ve tadilat işlerini tek muhatapta yürütüyoruz. Tüm Ege Bölgesi’nde hizmet.</p>
         <div className="mt-10 flex flex-wrap items-center gap-4">
-          <Link href="/iletisim" className="inline-flex items-center gap-3 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Projenizi anlat\u0131n <ArrowRight size={16} /></Link>
+          <Link href="/iletisim" className="inline-flex items-center gap-3 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Projenizi anlatın <ArrowRight size={16} /></Link>
           <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border border-[hsl(var(--background)/.4)] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--background))]"><MessageCircle size={16} /> WhatsApp</a>
         </div>
         <p className="mt-6 flex flex-wrap items-center gap-3 text-sm text-[hsl(var(--background)/.8)]">
           <Phone size={15} /> <a href={`tel:${CONTACT.phoneRaw}`} className="underline decoration-[hsl(var(--background)/.4)] underline-offset-2">{CONTACT.phoneDisplay}</a>
-          <span className="opacity-60">\u00B7</span>
-          <span className="font-mono-brand text-[11px] tracking-[.16em] uppercase opacity-90">Ku\u015Fadas\u0131 merkezli \u00B7 T\u00FCm Ege B\u00F6lgesi</span>
+          <span className="opacity-60">·</span>
+          <span className="font-mono-brand text-[11px] tracking-[.16em] uppercase opacity-90">Kuşadası merkezli · Tüm Ege Bölgesi</span>
         </p>
       </div>
     </section>
@@ -268,16 +268,16 @@ function AboutSection() {
     <section id="hakkimizda" className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="grid gap-10 md:grid-cols-2 md:items-stretch">
         <div>
-          <p className="eyebrow">01 \u2014 MALZEME \u00B7 USTA \u00B7 UYGULAMA</p>
+          <p className="eyebrow">01 — MALZEME · USTA · UYGULAMA</p>
           <h2 className="mt-5 font-display text-5xl leading-[.9] md:text-7xl">Malzeme. Usta.<br /><em>Uygulama.</em><br />Tek muhatap.</h2>
-          <p className="mt-8 max-w-md text-base leading-8 text-[hsl(var(--muted-foreground))]">2M Yap\u0131 Market Proje Bianca; malzeme, uygulama ve proje i\u015Fini tek muhatapta toplar. Merkezimiz Ku\u015Fadas\u0131\u2019nda, hizmet alan\u0131m\u0131z t\u00FCm Ege B\u00F6lgesi.</p>
+          <p className="mt-8 max-w-md text-base leading-8 text-[hsl(var(--muted-foreground))]">2M Yapı Market Proje Bianca; malzeme, uygulama ve proje işini tek muhatapta toplar. Merkezimiz Kuşadası’nda, hizmet alanımız tüm Ege Bölgesi.</p>
           <div className="mt-8 flex flex-wrap gap-2">
-            <span className="border border-[hsl(var(--border))] px-4 py-2 text-sm">Merkez: Ku\u015Fadas\u0131</span>
-            <span className="border border-[hsl(var(--primary))] px-4 py-2 text-sm text-[hsl(var(--primary))]">Hizmet: Ege B\u00F6lgesi</span>
+            <span className="border border-[hsl(var(--border))] px-4 py-2 text-sm">Merkez: Kuşadası</span>
+            <span className="border border-[hsl(var(--primary))] px-4 py-2 text-sm text-[hsl(var(--primary))]">Hizmet: Ege Bölgesi</span>
           </div>
         </div>
         <div className="relative">
-          <ServiceImage src={HERO_IMG} alt="D\u0131\u015F mek\u00E2n ve yap\u0131 uygulamas\u0131na dair g\u00F6rsel" className="aspect-[4/5] w-full object-cover" loading="lazy" />
+          <ServiceImage src={HERO_IMG} alt="Dış mekân ve yapı uygulamasına dair görsel" className="aspect-[4/5] w-full object-cover" loading="lazy" />
           <div className="absolute -left-3 -bottom-3 h-20 w-20 border bg-[hsl(var(--accent))] opacity-30" />
         </div>
       </div>
@@ -292,10 +292,10 @@ function Showcase() {
     <section id="uygulama" className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="flex items-end justify-between gap-5">
         <div>
-          <p className="eyebrow">02 \u2014 UYGULAMA ALANLARI</p>
-          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Neler<br /><em>yap\u0131yoruz?</em></h2>
+          <p className="eyebrow">02 — UYGULAMA ALANLARI</p>
+          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Neler<br /><em>yapıyoruz?</em></h2>
         </div>
-        <Link href="/uygulamalar" className="group inline-flex items-center gap-2 border-b border-[hsl(var(--border))] pb-1 text-xs font-extrabold uppercase tracking-[.13em]">T\u00FCm uygulamalar\u0131 g\u00F6r <ArrowRight size={15} /></Link>
+        <Link href="/uygulamalar" className="group inline-flex items-center gap-2 border-b border-[hsl(var(--border))] pb-1 text-xs font-extrabold uppercase tracking-[.13em]">Tüm uygulamaları gör <ArrowRight size={15} /></Link>
       </div>
       <div className="mt-12 flex flex-col gap-10">
         {showcaseItems.map((s, idx) => (
@@ -307,7 +307,7 @@ function Showcase() {
             <div className="md:pl-6">
               <p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-[hsl(var(--muted-foreground))]">{CATEGORY_LABELS[s.category]}</p>
               <h3 className="mt-4 font-display text-4xl md:text-6xl">{s.name}</h3>
-              <Link href={s.href} className="mt-4 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Detay\u0131 g\u00F6r <ArrowRight size={14} /></Link>
+              <Link href={s.href} className="mt-4 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Detayı gör <ArrowRight size={14} /></Link>
             </div>
           </article>
         ))}
@@ -322,8 +322,8 @@ function ServicesSection() {
   return (
     <section className="bg-[hsl(var(--foreground))] text-[hsl(var(--background))]">
       <div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
-        <p className="eyebrow text-[hsl(var(--background)/.5)]">03 \u2014 H\u0130ZMETLER</p>
-        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">\u0130htiyac\u0131n\u0131z neyse,<br /><em>oradan ba\u015Flayal\u0131m.</em></h2>
+        <p className="eyebrow text-[hsl(var(--background)/.5)]">03 — HİZMETLER</p>
+        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">İhtiyacınız neyse,<br /><em>oradan başlayalım.</em></h2>
         <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_1fr]">
           <div className="border-t border-[hsl(var(--background)/.16)]">
             {services.map((s, i) => {
@@ -365,15 +365,15 @@ function ServicesSection() {
 /* --------------------------- MATERIAL / CRAFT ------------------------------ */
 function MaterialCraft() {
   const rows = [
-    ['Malzeme', 'Yap\u0131 ve yenileme malzemesini do\u011Fru kaynaktan, i\u015Fin ihtiyac\u0131na g\u00F6re temin ediyoruz.'],
-    ['Usta', '\u0130\u015Fini bilen ekiplerle sahada d\u00FCzenli ve kontroll\u00FC ilerliyoruz.'],
-    ['Uygulama', 'Kapsam\u0131 netle\u015Ftirip i\u015Fi planl\u0131 bi\u00E7imde uyguluyor, s\u00FCreci takip ediyoruz.'],
+    ['Malzeme', 'Yapı ve yenileme malzemesini doğru kaynaktan, işin ihtiyacına göre temin ediyoruz.'],
+    ['Usta', 'İşini bilen ekiplerle sahada düzenli ve kontrollü ilerliyoruz.'],
+    ['Uygulama', 'Kapsamı netleştirip işi planlı biçimde uyguluyor, süreci takip ediyoruz.'],
   ];
   return (
     <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="grid gap-10 md:grid-cols-[1fr_1.1fr] md:items-start">
         <div>
-          <p className="eyebrow">04 \u2014 AVANTAJ</p>
+          <p className="eyebrow">04 — AVANTAJ</p>
           <h2 className="mt-4 font-display text-5xl leading-[.88] md:text-7xl">Malzeme. Usta.<br /><em>Uygulama.</em><br />Tek muhatap.</h2>
         </div>
         <div className="border-t border-[hsl(var(--border))]">
@@ -383,7 +383,7 @@ function MaterialCraft() {
               <p className="text-sm leading-7 text-[hsl(var(--muted-foreground))]">{d}</p>
             </div>
           ))}
-          <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 border border-[hsl(var(--primary))] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">WhatsApp\u2019tan yaz <MessageCircle size={15} /></a>
+          <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 border border-[hsl(var(--primary))] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">WhatsApp’tan yaz <MessageCircle size={15} /></a>
         </div>
       </div>
     </section>
@@ -396,9 +396,9 @@ function ProcessSection() {
       <div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
         <div className="grid gap-10 md:grid-cols-2 md:items-center">
           <div>
-            <p className="eyebrow">05 \u2014 YAKLA\u015EIMIMIZ</p>
-            <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Karma\u015Fay\u0131<br /><em>azalt\u0131r\u0131z.</em></h2>
-            <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Net bir s\u00FCre\u00E7, do\u011Fru planlama ve tek muhatap. \u0130htiyactan uygulamaya kadar her ad\u0131m\u0131 anla\u015F\u0131l\u0131r \u015Fekilde ilerletiyoruz.</p>
+            <p className="eyebrow">05 — YAKLAŞIMIMIZ</p>
+            <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Karmaşayı<br /><em>azaltırız.</em></h2>
+            <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Net bir süreç, doğru planlama ve tek muhatap. İhtiyaçtan uygulamaya kadar her adımı anlaşılır şekilde ilerletiyoruz.</p>
           </div>
           <div className="border-t border-[hsl(var(--border))]">
             {processSteps.map(([num, title, text]) => (
@@ -420,10 +420,10 @@ function BeforeAfterSection() {
     <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center">
         <div>
-          <p className="eyebrow">06 \u2014 \u00D6NCE / SONRA</p>
-          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">De\u011Fi\u015Fimi<br /><em>g\u00F6r\u00FCn.</em></h2>
-          <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Do\u011Fru uygulaman\u0131n bir ya\u015Fam alan\u0131nda yaratabilece\u011Fi de\u011Fi\u015Fimi ke\u015Ffedin.</p>
-          <Link href="/iletisim" className="mt-6 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Ke\u015Fif iste <ArrowRight size={14} /></Link>
+          <p className="eyebrow">06 — ÖNCE / SONRA</p>
+          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Değişimi<br /><em>görün.</em></h2>
+          <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Doğru uygulamanın bir yaşam alanında yaratabileceği değişimi keşfedin.</p>
+          <Link href="/iletisim" className="mt-6 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Keşif iste <ArrowRight size={14} /></Link>
         </div>
         <BeforeAfter data={beforeAfter} />
       </div>
@@ -436,13 +436,13 @@ function ServiceAreaSection() {
   return (
     <section className="bg-[hsl(var(--secondary))]">
       <div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
-        <p className="eyebrow">H\u0130ZMET B\u00D6LGEML\u0130Z</p>
-        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Ku\u015Fadas\u0131\u2019ndan<br /><em>t\u00FCm Ege\u2019ye.</em></h2>
-        <p className="mt-6 max-w-xl text-base leading-8 text-[hsl(var(--muted-foreground))]">Merkezimiz Ku\u015Fadas\u0131\u2019nda. Tadilat, yap\u0131 ve uygulama i\u015Fleri i\u00E7in Ege B\u00F6lgesi genelinde projeleri de\u011Ferlendiriyoruz.</p>
-        <p className="mt-4 max-w-xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">\u0130\u015Fin kapsam\u0131na ve bulundu\u011Funuz b\u00F6lgeye g\u00F6re ke\u015Fif ve uygulama planlamas\u0131 yap\u0131yoruz.</p>
-        <Link href="/iletisim" className="mt-8 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Projenizi anlat\u0131n <ArrowRight size={16} /></Link>
+        <p className="eyebrow">HİZMET BÖLGEMLİZ</p>
+        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Kuşadası’ndan<br /><em>tüm Ege’ye.</em></h2>
+        <p className="mt-6 max-w-xl text-base leading-8 text-[hsl(var(--muted-foreground))]">Merkezimiz Kuşadası’nda. Tadilat, yapı ve uygulama işleri için Ege Bölgesi genelinde projeleri değerlendiriyoruz.</p>
+        <p className="mt-4 max-w-xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">İşin kapsamına ve bulunduğunuz bölgeye göre keşif ve uygulama planlaması yapıyoruz.</p>
+        <Link href="/iletisim" className="mt-8 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Projenizi anlatın <ArrowRight size={16} /></Link>
         <p className="mt-8 font-mono-brand text-[11px] uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">
-          {CONTACT.serviceProvinces.join(' \u00B7 ')} ve Ege B\u00F6lgesi
+          {CONTACT.serviceProvinces.join(' · ')} ve Ege Bölgesi
         </p>
       </div>
     </section>
@@ -455,22 +455,22 @@ function StoreSection() {
     <section className="bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]">
       <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-20 md:grid-cols-2 md:items-center md:px-8 md:py-28">
         <div>
-          <p className="font-mono-brand text-[11px] uppercase tracking-[.25em] opacity-70">07 \u2014 MERKEZ\u0130M\u0130Z</p>
-          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Merkezimiz<br /><em>Ku\u015Fadas\u0131\u2019nda.</em></h2>
-          <p className="mt-6 max-w-md text-sm leading-7 opacity-80">Bizi yerinde ziyaret edebilir veya Ege B\u00F6lgesi\u2019ndeki projeniz i\u00E7in telefon ve WhatsApp \u00FCzerinden bize ula\u015Fabilirsiniz.</p>
-          <p className="mt-6 text-sm font-bold">2M Yap\u0131 Market Proje Bianca</p>
+          <p className="font-mono-brand text-[11px] uppercase tracking-[.25em] opacity-70">07 — MERKEZİMİZ</p>
+          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Merkezimiz<br /><em>Kuşadası’nda.</em></h2>
+          <p className="mt-6 max-w-md text-sm leading-7 opacity-80">Bizi yerinde ziyaret edebilir veya Ege Bölgesi’ndeki projeniz için telefon ve WhatsApp üzerinden bize ulaşabilirsiniz.</p>
+          <p className="mt-6 text-sm font-bold">2M Yapı Market Proje Bianca</p>
           <p className="mt-2 text-sm">TNR Corner Loft</p>
-          <p className="text-sm">So\u011Fucak, Ku\u015Fadas\u0131 Davutlar Yolu No:75</p>
-          <p className="text-sm">09400 Ku\u015Fadas\u0131 / AYDIN</p>
+          <p className="text-sm">Soğucak, Kuşadası Davutlar Yolu No:75</p>
+          <p className="text-sm">09400 Kuşadası / AYDIN</p>
           <p className="mt-3 text-sm">{CONTACT.phoneDisplay}</p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a href={BUSINESS.mapsDirections} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary-foreground))]">Yol tarifi al <ArrowRight size={14} /></a>
             <a href={`tel:${CONTACT.phoneRaw}`} className="inline-flex items-center gap-2 border border-[hsl(var(--accent-foreground)/.4)] px-5 py-3 text-xs font-bold uppercase tracking-widest">Hemen ara <Phone size={14} /></a>
-            <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[hsl(var(--accent-foreground)/.4)] px-5 py-3 text-xs font-bold uppercase tracking-widest">WhatsApp\u2019tan yaz <MessageCircle size={14} /></a>
+            <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[hsl(var(--accent-foreground)/.4)] px-5 py-3 text-xs font-bold uppercase tracking-widest">WhatsApp’tan yaz <MessageCircle size={14} /></a>
           </div>
         </div>
         <div className="aspect-square min-h-[280px] border border-[hsl(var(--accent-foreground)/.2)]">
-          <iframe title="2M Yap\u0131 Market Ku\u015Fadas\u0131 merkez konumu" src={BUSINESS.mapsEmbed} className="h-full w-full border-0 grayscale" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+          <iframe title="2M Yapı Market Kuşadası merkez konumu" src={BUSINESS.mapsEmbed} className="h-full w-full border-0 grayscale" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
         </div>
       </div>
     </section>
@@ -481,16 +481,16 @@ function GoogleReviewsSection() {
   return (
     <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="text-center">
-        <p className="eyebrow">G\u00DCVENCE</p>
-        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Google\u2019daki<br /><em>yorumlar\u0131m\u0131z\u0131</em><br />inceleyin.</h2>
-        <p className="mx-auto mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">\u0130\u015Fletmemizi Google\u2019da bulabilir, yorumlar\u0131 okuyabilir ve bize ula\u015Fabilirsiniz.</p>
+        <p className="eyebrow">GÜVENCE</p>
+        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Google’daki<br /><em>yorumlarımızı</em><br />inceleyin.</h2>
+        <p className="mx-auto mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">İşletmemizi Google’da bulabilir, yorumları okuyabilir ve bize ulaşabilirsiniz.</p>
         <a
-          href={BUSINESS.googleProfile || `https://www.google.com/search?q=${encodeURIComponent(SITE.name + ' Ku\u015Fadas\u0131')}`}
+          href={BUSINESS.googleProfile || `https://www.google.com/search?q=${encodeURIComponent(SITE.name + ' Kuşadası')}`}
           target="_blank"
           rel="noopener noreferrer"
           className="mt-6 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-6 py-4 text-xs font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]"
         >
-          Google\u2019da g\u00F6r \u2192
+          Google’da gör →
         </a>
       </div>
     </section>
@@ -502,8 +502,8 @@ function FaqSection() {
   return (
     <section className="mx-auto max-w-[900px] px-5 py-20 md:py-28">
       <div className="text-center">
-        <p className="eyebrow">08 \u2014 SORULAR</p>
-        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Akl\u0131n\u0131zdaki<br /><em>sorular.</em></h2>
+        <p className="eyebrow">08 — SORULAR</p>
+        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Aklınızdaki<br /><em>sorular.</em></h2>
       </div>
       <div className="mt-12 border-t border-[hsl(var(--border))]">
         {faqItems.map(([q, a], i) => (
@@ -523,12 +523,12 @@ function FaqSection() {
 function FinalCta() {
   return (
     <section className="bg-[hsl(var(--primary))] text-center text-[hsl(var(--primary-foreground))] px-5 py-16 md:py-24">
-      <p className="font-mono-brand text-[11px] uppercase tracking-[.26em] opacity-70">09 \u2014 BA\u015ELAYALIM</p>
-      <h2 className="mt-5 font-display text-5xl leading-[.9] md:text-7xl">Bir projeniz mi var?<br /><em>Ba\u015Flayal\u0131m.</em></h2>
-      <p className="mx-auto mt-5 max-w-md text-sm leading-7 opacity-80">Bulundu\u011Funuz b\u00F6lgeyi ve yapt\u0131rmak istedi\u011Finiz i\u015Fi yaz\u0131n; gerisini birlikte netle\u015Ftiririz.</p>
+      <p className="font-mono-brand text-[11px] uppercase tracking-[.26em] opacity-70">09 — BAŞLAYALIM</p>
+      <h2 className="mt-5 font-display text-5xl leading-[.9] md:text-7xl">Bir projeniz mi var?<br /><em>Başlayalım.</em></h2>
+      <p className="mx-auto mt-5 max-w-md text-sm leading-7 opacity-80">Bulunduğunuz bölgeyi ve yaptırmak istediğiniz işi yazın; gerisini birlikte netleştiririz.</p>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <Link href="/iletisim" className="inline-flex items-center gap-3 bg-[hsl(var(--foreground))] px-6 py-4 text-xs font-bold uppercase tracking-[.13em] text-[hsl(var(--background))]">Projenizi anlat\u0131n <ArrowRight size={16} /></Link>
-        <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border border-[hsl(var(--primary-foreground)/.4)] px-6 py-4 text-xs font-bold uppercase tracking-[.13em]"><MessageCircle size={16} /> WhatsApp\u2019tan yaz</a>
+        <Link href="/iletisim" className="inline-flex items-center gap-3 bg-[hsl(var(--foreground))] px-6 py-4 text-xs font-bold uppercase tracking-[.13em] text-[hsl(var(--background))]">Projenizi anlatın <ArrowRight size={16} /></Link>
+        <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border border-[hsl(var(--primary-foreground)/.4)] px-6 py-4 text-xs font-bold uppercase tracking-[.13em]"><MessageCircle size={16} /> WhatsApp’tan yaz</a>
       </div>
       <a href={`tel:${CONTACT.phoneRaw}`} className="mt-6 inline-flex items-center gap-2 text-sm underline underline-offset-4">{CONTACT.phoneDisplay}</a>
     </section>
@@ -540,7 +540,7 @@ function Home() {
   return (
     <>
       <Meta
-        title="2M Yap\u0131 Market Proje | Ege B\u00F6lgesi Tadilat & Yap\u0131 Uygulamalar\u0131"
+        title="2M Yapı Market Proje | Ege Bölgesi Tadilat & Yapı Uygulamaları"
         description={SITE.description}
       />
       <main>
@@ -566,17 +566,17 @@ function ApplicationsPage() {
   return (
     <>
       <Meta
-        title="Uygulama Alanlar\u0131 | 2M Yap\u0131 Market Proje | Ege B\u00F6lgesi"
-        description="Tadilattan \u00E7elik konstr\u00FCksiyona, \u00E7at\u0131dan havuza kadar farkl\u0131 yap\u0131 i\u015Flerinde malzeme ve uygulamay\u0131 birlikte ele al\u0131yoruz."
+        title="Uygulama Alanları | 2M Yapı Market Proje | Ege Bölgesi"
+        description="Tadilattan çelik konstrüksiyona, çatıdan havuza kadar farklı yapı işlerinde malzeme ve uygulamayı birlikte ele alıyoruz."
         path="/uygulamalar"
       />
       <section className="bg-[hsl(var(--secondary))] px-5 py-16 md:px-8 md:py-24">
         <div className="mx-auto max-w-[1240px]">
           <p className="eyebrow">UYGULAMA ALANLARI</p>
-          <h1 className="mt-4 font-display text-6xl leading-[.88] md:text-8xl">Uygulama<br /><em>alanlar\u0131m\u0131z.</em></h1>
-          <p className="mt-6 max-w-xl text-lg leading-8 text-[hsl(var(--muted-foreground))]">Tadilattan \u00E7elik konstr\u00FCksiyona, \u00E7at\u0131dan havuza kadar farkl\u0131 yap\u0131 ihtiya\u00E7lar\u0131nda malzeme ve uygulamay\u0131 birlikte ele al\u0131yoruz.</p>
-          <p className="mt-4 max-w-xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">Merkezimiz Ku\u015Fadas\u0131\u2019nda; Ege B\u00F6lgesi genelindeki projeleri de\u011Ferlendiriyoruz.</p>
-          <Link href="/iletisim" className="mt-8 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Projenizi anlat\u0131n <ArrowRight size={16} /></Link>
+          <h1 className="mt-4 font-display text-6xl leading-[.88] md:text-8xl">Uygulama<br /><em>alanlarımız.</em></h1>
+          <p className="mt-6 max-w-xl text-lg leading-8 text-[hsl(var(--muted-foreground))]">Tadilattan çelik konstrüksiyona, çatıdan havuza kadar farklı yapı ihtiyaçlarında malzeme ve uygulamayı birlikte ele alıyoruz.</p>
+          <p className="mt-4 max-w-xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">Merkezimiz Kuşadası’nda; Ege Bölgesi genelindeki projeleri değerlendiriyoruz.</p>
+          <Link href="/iletisim" className="mt-8 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Projenizi anlatın <ArrowRight size={16} /></Link>
         </div>
       </section>
 
@@ -592,7 +592,7 @@ function ApplicationsPage() {
                 <p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-white/60">{CATEGORY_LABELS[services[0].category]}</p>
                 <h2 className="mt-2 font-display text-4xl text-white md:text-6xl">{services[0].name}</h2>
                 <p className="mt-2 max-w-md text-sm text-white/80">{services[0].short}</p>
-                <span className="mt-4 inline-flex items-center gap-2 border-b border-white/40 pb-1 text-xs font-bold uppercase tracking-widest text-white">Detay\u0131 g\u00F6r <ArrowRight size={14} /></span>
+                <span className="mt-4 inline-flex items-center gap-2 border-b border-white/40 pb-1 text-xs font-bold uppercase tracking-widest text-white">Detayı gör <ArrowRight size={14} /></span>
               </div>
             </Link>
           </article>
@@ -608,7 +608,7 @@ function ApplicationsPage() {
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
                   <p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-white/60">{CATEGORY_LABELS[s.category]}</p>
                   <h3 className="mt-2 font-display text-3xl text-white">{s.name}</h3>
-                  <span className="mt-3 inline-flex items-center gap-2 border-b border-white/40 pb-1 text-xs font-bold uppercase tracking-widest text-white">Detay\u0131 g\u00F6r <ArrowRight size={14} /></span>
+                  <span className="mt-3 inline-flex items-center gap-2 border-b border-white/40 pb-1 text-xs font-bold uppercase tracking-widest text-white">Detayı gör <ArrowRight size={14} /></span>
                 </div>
               </Link>
             </article>
@@ -624,7 +624,7 @@ function ApplicationsPage() {
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6 md:p-10">
                 <p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-white/60">{CATEGORY_LABELS[services[3].category]}</p>
                 <h2 className="mt-2 font-display text-4xl text-white md:text-6xl">{services[3].name}</h2>
-                <span className="mt-4 inline-flex items-center gap-2 border-b border-white/40 pb-1 text-xs font-bold uppercase tracking-widest text-white">Detay\u0131 g\u00F6r <ArrowRight size={14} /></span>
+                <span className="mt-4 inline-flex items-center gap-2 border-b border-white/40 pb-1 text-xs font-bold uppercase tracking-widest text-white">Detayı gör <ArrowRight size={14} /></span>
               </div>
             </Link>
           </article>
@@ -640,7 +640,7 @@ function ApplicationsPage() {
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
                   <p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-white/60">{CATEGORY_LABELS[s.category]}</p>
                   <h3 className="mt-2 font-display text-3xl text-white">{s.name}</h3>
-                  <span className="mt-3 inline-flex items-center gap-2 border-b border-white/40 pb-1 text-xs font-bold uppercase tracking-widest text-white">Detay\u0131 g\u00F6r <ArrowRight size={14} /></span>
+                  <span className="mt-3 inline-flex items-center gap-2 border-b border-white/40 pb-1 text-xs font-bold uppercase tracking-widest text-white">Detayı gör <ArrowRight size={14} /></span>
                 </div>
               </Link>
             </article>
@@ -663,7 +663,7 @@ function ServiceDetail() {
           <Link href="/hizmetler" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[hsl(var(--muted-foreground))]"><ArrowRight size={14} className="rotate-180" /> Hizmetler</Link>
           <div className="mt-12 grid gap-10 lg:grid-cols-2 items-end">
             <div>
-              <p className="eyebrow">{CATEGORY_LABELS[service.category]} / EGE B\u00D6LGES\u0130</p>
+              <p className="eyebrow">{CATEGORY_LABELS[service.category]} / EGE BÖLGESİ</p>
               <h1 className="mt-4 font-display text-6xl leading-[.88] md:text-8xl">{service.name}</h1>
               <p className="mt-6 max-w-md text-lg leading-8 text-[hsl(var(--muted-foreground))]">{service.short}</p>
             </div>
@@ -677,10 +677,10 @@ function ServiceDetail() {
             <ServiceImage src={service.image} alt={service.imageAlt} className="h-full w-full object-cover" loading="lazy" />
           </div>
           <div className="border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
-            <p className="eyebrow">Ke\u015Fif al</p>
+            <p className="eyebrow">Keşif al</p>
             <h2 className="mt-4 font-display text-4xl">{service.name}</h2>
-            <p className="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))]">Ku\u015Fadas\u0131 merkezliyiz; Ege B\u00F6lgesi genelindeki talepleri de\u011Ferlendiriyoruz.</p>
-            <a href={whatsappUrl(service.whatsapp)} target="_blank" rel="noopener noreferrer" className="mt-5 flex items-center justify-center gap-2 bg-[hsl(var(--primary))] px-4 py-3 text-xs font-extrabold uppercase tracking-widest text-[hsl(var(--primary-foreground))]"><MessageCircle size={15} /> WhatsApp ke\u015Fif</a>
+            <p className="mt-3 text-sm leading-6 text-[hsl(var(--muted-foreground))]">Kuşadası merkezliyiz; Ege Bölgesi genelindeki talepleri değerlendiriyoruz.</p>
+            <a href={whatsappUrl(service.whatsapp)} target="_blank" rel="noopener noreferrer" className="mt-5 flex items-center justify-center gap-2 bg-[hsl(var(--primary))] px-4 py-3 text-xs font-extrabold uppercase tracking-widest text-[hsl(var(--primary-foreground))]"><MessageCircle size={15} /> WhatsApp keşif</a>
             <a href={`tel:${CONTACT.phoneRaw}`} className="mt-3 flex items-center justify-center gap-2 border border-[hsl(var(--border))] px-4 py-3 text-xs font-bold uppercase tracking-widest"><Phone size={15} /> {CONTACT.phoneDisplay}</a>
           </div>
         </div>
@@ -695,14 +695,14 @@ function ServicesPage() {
   const list = cat === 'all' ? services : services.filter((s) => s.category === cat);
   return (
     <>
-      <Meta title="Hizmetler | 2M Yap\u0131 Market Proje | Ege B\u00F6lgesi" description="Tadilat, \u00E7at\u0131, pergola, \u00E7elik konstr\u00FCksiyon, d\u0131\u015F cephe, prefabrik, seramik, tesisat ve havuz uygulamalar\u0131 \u2014 Ku\u015Fadas\u0131 merkezli, Ege B\u00F6lgesi genelinde." path="/hizmetler" />
+      <Meta title="Hizmetler | 2M Yapı Market Proje | Ege Bölgesi" description="Tadilat, çatı, pergola, çelik konstrüksiyon, dış cephe, prefabrik, seramik, tesisat ve havuz uygulamaları — Kuşadası merkezli, Ege Bölgesi genelinde." path="/hizmetler" />
       <main className="mx-auto max-w-[1240px] px-5 py-14 md:px-8 md:py-24">
-        <p className="eyebrow">H\u0130ZMETLER</p>
-        <h1 className="mt-4 font-display text-6xl leading-[.88] md:text-8xl">Yap\u0131, tadilat<br /> & <em>uygulama.</em></h1>
-        <p className="mt-6 max-w-lg text-sm leading-7 text-[hsl(var(--muted-foreground))]">Merkezimiz Ku\u015Fadas\u0131\u2019nda. Ege B\u00F6lgesi genelindeki tadilat ve yap\u0131 i\u015Flerini de\u011Ferlendiriyoruz.</p>
+        <p className="eyebrow">HİZMETLER</p>
+        <h1 className="mt-4 font-display text-6xl leading-[.88] md:text-8xl">Yapı, tadilat<br /> & <em>uygulama.</em></h1>
+        <p className="mt-6 max-w-lg text-sm leading-7 text-[hsl(var(--muted-foreground))]">Merkezimiz Kuşadası’nda. Ege Bölgesi genelindeki tadilat ve yapı işlerini değerlendiriyoruz.</p>
         <div className="mt-10 flex flex-wrap gap-2" role="group" aria-label="Kategori">
           {cats.map((c) => (
-            <button key={c} type="button" onClick={() => setCat(c)} className={`border px-4 py-3 text-xs font-bold uppercase tracking-wider ${cat === c ? 'border-[hsl(var(--accent))] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]' : 'border-[hsl(var(--border))] hover:border-[hsl(var(--primary))]'}`}>{c === 'all' ? 'T\u00FCm\u00FC' : CATEGORY_LABELS[c as (typeof services)[0]['category']]}</button>
+            <button key={c} type="button" onClick={() => setCat(c)} className={`border px-4 py-3 text-xs font-bold uppercase tracking-wider ${cat === c ? 'border-[hsl(var(--accent))] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]' : 'border-[hsl(var(--border))] hover:border-[hsl(var(--primary))]'}`}>{c === 'all' ? 'Tümü' : CATEGORY_LABELS[c as (typeof services)[0]['category']]}</button>
           ))}
         </div>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -732,21 +732,21 @@ function ServicesPage() {
 function ContactPage() {
   return (
     <>
-      <Meta title="\u0130leti\u015Fim & Ke\u015Fif | 2M Yap\u0131 Market Proje" description="Ege B\u00F6lgesi\u2019ndeki tadilat ve yap\u0131 i\u015Finiz i\u00E7in ke\u015Fif talebi g\u00F6nderin. Merkezimiz Ku\u015Fadas\u0131\u2019nda." path="/iletisim" />
+      <Meta title="İletişim & Keşif | 2M Yapı Market Proje" description="Ege Bölgesi’ndeki tadilat ve yapı işiniz için keşif talebi gönderin. Merkezimiz Kuşadası’nda." path="/iletisim" />
       <main className="mx-auto max-w-[1240px] px-5 py-16 md:px-8 md:py-24">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-start">
           <div>
-            <p className="eyebrow">\u0130LET\u0130\u015E\u0130M / \u0130LK ADIM</p>
-            <h1 className="mt-4 font-display text-6xl leading-[.85] md:text-8xl">Projenizi<br /><em>bize b\u0131rak\u0131n.</em></h1>
-            <p className="mt-6 max-w-md text-base leading-8 text-[hsl(var(--muted-foreground))]">Yapt\u0131rmak istedi\u011Finiz i\u015Fi ve bulundu\u011Funuz il / il\u00E7eyi yaz\u0131n. Kapsam\u0131 birlikte netle\u015Ftiririz.</p>
+            <p className="eyebrow">İLETİŞİM / İLK ADIM</p>
+            <h1 className="mt-4 font-display text-6xl leading-[.85] md:text-8xl">Projenizi<br /><em>bize bırakın.</em></h1>
+            <p className="mt-6 max-w-md text-base leading-8 text-[hsl(var(--muted-foreground))]">Yaptırmak istediğiniz işi ve bulunduğunuz il / ilçeyi yazın. Kapsamı birlikte netleştiririz.</p>
             <div className="mt-10 grid gap-4 border-t border-[hsl(var(--border))] pt-6 text-sm">
               <a href={`tel:${CONTACT.phoneRaw}`} className="flex items-center gap-3"><Phone size={18} className="text-[hsl(var(--primary))]" /> {CONTACT.phoneDisplay}</a>
-              <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3"><MessageCircle size={18} className="text-[hsl(var(--primary))]" /> WhatsApp\u2019tan yaz</a>
-              <p className="flex items-start gap-3"><MapPin size={18} className="mt-1 shrink-0 text-[hsl(var(--primary))]" /> TNR Corner Loft<br />Ku\u015Fadas\u0131 Davutlar Yolu No:75 \u00B7 So\u011Fucak<br />09400 Ku\u015Fadas\u0131 / AYDIN<br /><span className="mt-2 block text-[hsl(var(--muted-foreground))]">Merkez: Ku\u015Fadas\u0131 \u00B7 Hizmet: Ege B\u00F6lgesi</span></p>
+              <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3"><MessageCircle size={18} className="text-[hsl(var(--primary))]" /> WhatsApp’tan yaz</a>
+              <p className="flex items-start gap-3"><MapPin size={18} className="mt-1 shrink-0 text-[hsl(var(--primary))]" /> TNR Corner Loft<br />Kuşadası Davutlar Yolu No:75 · Soğucak<br />09400 Kuşadası / AYDIN<br /><span className="mt-2 block text-[hsl(var(--muted-foreground))]">Merkez: Kuşadası · Hizmet: Ege Bölgesi</span></p>
             </div>
           </div>
           <div className="bg-[hsl(var(--card))] p-6 md:p-8">
-            <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] text-[hsl(var(--muted-foreground))]">KE\u015E\u0130F TALEB\u0130</p>
+            <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] text-[hsl(var(--muted-foreground))]">KEŞİF TALEBİ</p>
             <div className="mt-6"><QuoteForm /></div>
           </div>
         </div>

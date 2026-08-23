@@ -11,7 +11,7 @@ export function ServiceImage({ src, alt, fallbackAlt, className, ...props }: Ser
     return (
       <div className={`flex items-center justify-center bg-[hsl(var(--muted))] ${className ?? ''}`}>
         <span className="text-center text-sm text-[hsl(var(--muted-foreground))] px-4">
-          {fallbackAlt || alt || 'G\u00F6rsel y\u00FCklenemedi'}
+          {fallbackAlt || alt || 'Görsel yüklenemedi'}
         </span>
       </div>
     );
