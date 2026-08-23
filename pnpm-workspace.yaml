@@ -36,6 +36,7 @@ minimumReleaseAgeExclude:
 
 packages:
   - 2m-yapi-market
+  - api-server
   - artifacts/*
   - lib/*
   - lib/integrations/*

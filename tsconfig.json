@@ -1,0 +1,10 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./lib/db" },
+    { "path": "./lib/api-zod" },
+    { "path": "./lib/api-client-react" },
+    { "path": "./scripts" },
+    { "path": "./api-server" }
+  ]
+}
