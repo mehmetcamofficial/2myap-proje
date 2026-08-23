@@ -55,11 +55,10 @@ export const CONTACT = {
 } as const;
 
 export const NAV = [
-  { href: '/', label: 'Ana Sayfa', anchor: '' },
-  { href: '/hizmetler', label: 'Hizmetler', anchor: '' },
-  { href: '/#uygulama', label: 'Uygulamalar', anchor: 'uygulama' },
-  { href: '/#hakkimizda', label: 'Hakkımızda', anchor: 'hakkimizda' },
-  { href: '/iletisim', label: 'İletişim', anchor: '' },
+  { href: '/', label: 'Ana Sayfa' },
+  { href: '/hizmetler', label: 'Hizmetler' },
+  { href: '/uygulamalar', label: 'Uygulamalar' },
+  { href: '/iletisim', label: '\u0130leti\u015Fim' },
 ] as const;
 
 export const whatsappUrl = (message: string) =>

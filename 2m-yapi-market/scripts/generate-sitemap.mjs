@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const base = (process.env.VITE_PUBLIC_SITE_URL || 'https://2myapimarket.vercel.app').replace(/\/+$/, '');
 
-const staticPaths = ['', '/hizmetler', '/iletisim'];
+const staticPaths = ['', '/hizmetler', '/uygulamalar', '/iletisim'];
 
 // Collect service slugs straight from the data source of truth.
 const servicesSrc = readFileSync(resolve(root, 'src/data/services.ts'), 'utf8');
