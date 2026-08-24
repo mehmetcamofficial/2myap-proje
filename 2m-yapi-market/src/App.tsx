@@ -917,7 +917,7 @@ const BlogDetailPage = lazy(() => import('@/pages/blog-detail'));
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/admin/*" component={AdminApp} />
       <Route path="/hizmetler" component={ServicesPage} />
       <Route path="/uygulamalar" component={ApplicationsPage} />
       <Route path="/galeri" component={GaleriPage} />
@@ -925,7 +925,7 @@ function Router() {
       <Route path="/blog/:slug" component={BlogDetailPage} />
       <Route path="/iletisim" component={ContactPage} />
       {services.map((s) => <Route key={s.id} path={s.href} component={ServiceDetail} />)}
-      <Route path="/admin" component={AdminApp} />
+      <Route path="/" component={Home} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -980,17 +980,26 @@ function AdminApp() {
 }
 
 function App() {
+  const [location] = useLocation();
+  const isAdmin = location.startsWith('/admin');
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="site-noise min-h-[100dvh]">
-          <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-[hsl(var(--primary))] focus:px-4 focus:py-2 focus:text-[hsl(var(--primary-foreground))]">İçeriğe atla</a>
-          <Header />
-          <ErrorBoundary><main id="main-content"><Router /></main></ErrorBoundary>
-          <Footer />
-          <BottomBar />
-          <WhatsappWidget />
-        </div>
+        {isAdmin ? (
+          <div className="min-h-[100dvh] bg-[hsl(var(--background))]">
+            <ErrorBoundary><Router /></ErrorBoundary>
+          </div>
+        ) : (
+          <div className="site-noise min-h-[100dvh]">
+            <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-[hsl(var(--primary))] focus:px-4 focus:py-2 focus:text-[hsl(var(--primary-foreground))]">İçeriğe atla</a>
+            <Header />
+            <ErrorBoundary><main id="main-content"><Router /></main></ErrorBoundary>
+            <Footer />
+            <BottomBar />
+            <WhatsappWidget />
+          </div>
+        )}
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
