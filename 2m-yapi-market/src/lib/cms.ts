@@ -36,6 +36,9 @@ export interface Gallery {
   slug: string;
   description: string;
   coverImage: string;
+  category: string;
+  location: string;
+  size: string;
   published: boolean;
   displayOrder: number;
 }
@@ -62,6 +65,22 @@ async function cmsFetch<T>(path: string, init?: RequestInit): Promise<T | null> 
   } catch {
     return null;
   }
+}
+
+export interface BlogPost {
+  id: number;
+  slug: string;
+  title: string;
+  category: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  imageAlt: string;
+  published: boolean;
+  seoTitle: string;
+  seoDesc: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SiteData {

@@ -232,6 +232,8 @@ const Footer = memo(function Footer() {
           <div className="mt-4 grid gap-2.5 text-xs opacity-70">
             <Link href="/hizmetler">Hizmetler</Link>
             <Link href="/uygulamalar">Uygulama Alanları</Link>
+            <Link href="/galeri">Projeler & Galeri</Link>
+            <Link href="/blog">Blog & Rehber</Link>
             <Link href="/iletisim">İletişim & Keşif</Link>
           </div>
         </div>
@@ -907,6 +909,10 @@ function ContactPage() {
     </>
   );
 }
+const GaleriPage = lazy(() => import('@/pages/galeri'));
+const BlogPage = lazy(() => import('@/pages/blog'));
+const BlogDetailPage = lazy(() => import('@/pages/blog-detail'));
+
 /* -------------------------------- ROUTER ----------------------------------- */
 function Router() {
   return (
@@ -914,6 +920,9 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/hizmetler" component={ServicesPage} />
       <Route path="/uygulamalar" component={ApplicationsPage} />
+      <Route path="/galeri" component={GaleriPage} />
+      <Route path="/blog" component={BlogPage} />
+      <Route path="/blog/:slug" component={BlogDetailPage} />
       <Route path="/iletisim" component={ContactPage} />
       {services.map((s) => <Route key={s.id} path={s.href} component={ServiceDetail} />)}
       <Route path="/admin" component={AdminApp} />

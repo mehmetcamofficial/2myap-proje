@@ -6,6 +6,7 @@ export const blogPostsTable = pgTable('blog_posts', {
   id: serial('id').primaryKey(),
   slug: varchar('slug', { length: 255 }).notNull().unique(),
   title: varchar('title', { length: 255 }).notNull(),
+  category: varchar('category', { length: 100 }).notNull().default(''),
   excerpt: text('excerpt').notNull().default(''),
   content: text('content').notNull().default(''),
   image: text('image').notNull().default(''),
