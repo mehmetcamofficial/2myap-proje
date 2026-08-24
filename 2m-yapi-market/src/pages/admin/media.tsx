@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from './auth-context';
+import { apiFetch } from '@/lib/api';
 
 interface MediaItem {
   id: number;
@@ -21,10 +22,11 @@ export function AdminMediaPage() {
   const [uploading, setUploading] = useState(false);
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const baseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
 
   const load = useCallback(() => {
     const qs = search ? `?search=${encodeURIComponent(search)}` : '';
-    fetch(`/api/admin/media${qs}`, { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch(`/api/admin/media${qs}`, { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((data) => setMedia(Array.isArray(data) ? data : []))
       .catch(() => {});
@@ -39,7 +41,7 @@ export function AdminMediaPage() {
       for (const file of Array.from(files)) {
         const formData = new FormData();
         formData.append('file', file);
-        const res = await fetch('/api/admin/media', {
+        const res = await apiFetch('/api/admin/media', {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: formData,
@@ -60,7 +62,7 @@ export function AdminMediaPage() {
   };
 
   const updateAlt = async (id: number, altText: string) => {
-    await fetch(`/api/admin/media/${id}`, {
+    await apiFetch(`/api/admin/media/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ altText }),
@@ -69,7 +71,7 @@ export function AdminMediaPage() {
 
   const del = async (id: number) => {
     if (!confirm('Silmek istediğinize emin misiniz?')) return;
-    const res = await fetch(`/api/admin/media/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    const res = await apiFetch(`/api/admin/media/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
     const data = await res.json();
     if (!res.ok) {
       setToast({ type: 'error', msg: data.error || 'Silme başarısız' });
@@ -109,7 +111,7 @@ export function AdminMediaPage() {
         {media.map((m) => (
           <div key={m.id} className="group border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
             <div className="aspect-square bg-[hsl(var(--muted))] overflow-hidden">
-              <img src={`/api/admin/media/${m.id}`} alt={m.altText || m.filename} className="h-full w-full object-cover" loading="lazy" />
+              <img src={`${baseUrl}/api/admin/media/${m.id}`} alt={m.altText || m.filename} className="h-full w-full object-cover" loading="lazy" />
             </div>
             <div className="p-3">
               <p className="truncate text-xs font-medium" title={m.filename}>{m.filename}</p>

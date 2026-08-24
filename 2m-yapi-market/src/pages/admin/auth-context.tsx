@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { apiFetch, apiFetchJson } from '@/lib/api';
 
 interface User {
   id: number;
@@ -26,8 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('admin_token');
     if (saved) {
       setToken(saved);
-      fetch('/api/admin/me', { headers: { Authorization: `Bearer ${saved}` } })
-        .then((r) => r.ok ? r.json() : Promise.reject())
+      apiFetchJson<{ user: User }>('/api/admin/me', { headers: { Authorization: `Bearer ${saved}` } })
         .then((data) => setUser(data.user))
         .catch(() => { localStorage.removeItem('admin_token'); setToken(null); })
         .finally(() => setLoading(false));
@@ -37,23 +37,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const res = await fetch('/api/admin/login', {
+    const data = await apiFetchJson<{ token: string; user: User }>('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || 'Giriş başarısız');
-    }
-    const data = await res.json();
     localStorage.setItem('admin_token', data.token);
     setToken(data.token);
     setUser(data.user);
   };
 
   const logout = async () => {
-    await fetch('/api/admin/logout', { method: 'POST' }).catch(() => {});
+    await apiFetch('/api/admin/logout', { method: 'POST' }).catch(() => {});
     localStorage.removeItem('admin_token');
     setToken(null);
     setUser(null);

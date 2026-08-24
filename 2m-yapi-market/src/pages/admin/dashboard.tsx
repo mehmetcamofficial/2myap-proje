@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from './auth-context';
 import { Link } from 'wouter';
+import { apiFetch } from '@/lib/api';
 
 export function AdminDashboard() {
   const { token } = useAuth();
@@ -9,13 +10,13 @@ export function AdminDashboard() {
   useEffect(() => {
     const headers = { Authorization: `Bearer ${token}` };
     Promise.all([
-      fetch('/api/admin/services', { headers }).then((r) => r.json()),
-      fetch('/api/admin/leads', { headers }).then((r) => r.json()),
-      fetch('/api/admin/blog', { headers }).then((r) => r.json()),
-      fetch('/api/admin/faqs', { headers }).then((r) => r.json()),
-      fetch('/api/admin/applications', { headers }).then((r) => r.json()),
-      fetch('/api/admin/galleries', { headers }).then((r) => r.json()),
-      fetch('/api/admin/media', { headers }).then((r) => r.json()),
+      apiFetch('/api/admin/services', { headers }).then((r) => r.json()),
+      apiFetch('/api/admin/leads', { headers }).then((r) => r.json()),
+      apiFetch('/api/admin/blog', { headers }).then((r) => r.json()),
+      apiFetch('/api/admin/faqs', { headers }).then((r) => r.json()),
+      apiFetch('/api/admin/applications', { headers }).then((r) => r.json()),
+      apiFetch('/api/admin/galleries', { headers }).then((r) => r.json()),
+      apiFetch('/api/admin/media', { headers }).then((r) => r.json()),
     ]).then(([services, leads, blog, faqs, applications, galleries, media]) => {
       const leadArr = Array.isArray(leads) ? leads : [];
       setStats({
