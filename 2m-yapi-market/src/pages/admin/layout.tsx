@@ -4,9 +4,15 @@ import { useAuth } from './auth-context';
 const NAV_ITEMS = [
   { href: '/admin', label: 'Gösterge Paneli' },
   { href: '/admin/services', label: 'Hizmetler' },
+  { href: '/admin/applications', label: 'Uygulamalar' },
+  { href: '/admin/faqs', label: 'S.S.S.' },
+  { href: '/admin/galleries', label: 'Galeriler' },
+  { href: '/admin/media', label: 'Medya' },
   { href: '/admin/blog', label: 'Blog' },
+  { href: '/admin/navigation', label: 'Navigasyon' },
   { href: '/admin/leads', label: 'Talepler' },
   { href: '/admin/settings', label: 'Ayarlar' },
+  { href: '/admin/account', label: 'Hesabım' },
 ] as const;
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -21,7 +27,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             <Link href="/admin" className="font-display text-lg font-bold">2M YAPI MARKET</Link>
             <p className="mt-1 text-[10px] uppercase tracking-widest text-[hsl(var(--muted-foreground))]">Yönetim Paneli</p>
           </div>
-          <nav className="flex-1 px-3 py-4">
+          <nav className="flex-1 overflow-y-auto px-3 py-4">
             {NAV_ITEMS.map((item) => {
               const active = item.href === '/admin' ? location === '/admin' : location.startsWith(item.href);
               return (

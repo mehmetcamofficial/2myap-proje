@@ -3,8 +3,14 @@ import { eq } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
 
 async function seed() {
-  const email = process.env.ADMIN_EMAIL || 'admin@2myapi.com';
-  const password = process.env.ADMIN_PASSWORD || 'Admin123!';
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_INITIAL_PASSWORD;
+
+  if (!email || !password) {
+    console.error('Seed requires ADMIN_EMAIL and ADMIN_INITIAL_PASSWORD environment variables');
+    process.exit(1);
+  }
+
   const name = process.env.ADMIN_NAME || 'Admin';
 
   const existing = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
