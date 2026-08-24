@@ -1,76 +1,82 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MessageCircle, X } from 'lucide-react';
-import { BUSINESS, whatsappUrl } from '@/data/site';
+import { whatsappUrl } from '@/data/site';
+import { BUSINESS } from '@/data/site';
 
-/**
- * Yüzen WhatsApp sohbet öğesi.
- * - Masaüstü: sağ altta. Mobil: sticky alt barın üstünde.
- * - Kısa gecikmeyle karşılama balonu gösterir; oturum boyunca kapatılabilir
- *   (sessionStorage). prefers-reduced-motion desteklenir.
- */
+const WA_MESSAGE = BUSINESS.whatsappDefaultMessage;
+const DISMISS_KEY = '2m_wa_dismissed';
+
 export function WhatsappWidget() {
-  const [bubbleOpen, setBubbleOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    if (sessionStorage.getItem('wa-bubble-dismissed') === '1') {
-      setDismissed(true);
-      return;
-    }
-    const t = window.setTimeout(() => setBubbleOpen(true), 3500);
-    return () => window.clearTimeout(t);
+    const wasDismissed = sessionStorage.getItem(DISMISS_KEY);
+    if (wasDismissed) setDismissed(true);
   }, []);
 
-  const closeBubble = () => {
-    setBubbleOpen(false);
+  const handleDismiss = () => {
     setDismissed(true);
-    sessionStorage.setItem('wa-bubble-dismissed', '1');
+    setExpanded(false);
+    sessionStorage.setItem(DISMISS_KEY, '1');
   };
 
-  const href = whatsappUrl(BUSINESS.whatsappDefaultMessage);
+  if (dismissed) return null;
 
   return (
-    <div className="fixed right-4 bottom-[72px] z-[45] flex flex-col items-end gap-3 md:right-6 md:bottom-6">
-      {/* Karşılama balonu */}
-      {bubbleOpen && !dismissed && (
-        <div
-          role="status"
-          className="reveal w-[240px] relative rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 shadow-[var(--shadow-md)]"
-        >
-          <button
-            type="button"
-            aria-label="Balonu kapat"
-            onClick={closeBubble}
-            className="absolute top-2 right-2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
-          >
-            <X size={14} />
-          </button>
-          <p className="text-sm font-bold">Merhaba 👋</p>
-          <p className="mt-1 text-xs leading-5 text-[hsl(var(--muted-foreground))]">
-            Ege Bölgesi’ndeki tadilat veya yapı işiniz için yazabilirsiniz.
-          </p>
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-[#25D366] px-3 py-2.5 text-[11px] font-extrabold uppercase tracking-wider text-white"
-          >
-            <MessageCircle size={14} /> WhatsApp’tan Yaz
-          </a>
+    <div className="fixed bottom-20 right-5 z-50 md:bottom-8 md:right-8">
+      {/* Expanded preview */}
+      {expanded && (
+        <div className="mb-4 w-[280px] border border-[hsl(var(--border))] bg-white shadow-xl animate-scale-in">
+          <div className="flex items-center justify-between bg-[hsl(120,40%,40%)] px-4 py-3 text-white">
+            <div>
+              <p className="text-sm font-bold">2M Yapı</p>
+              <p className="text-[10px] opacity-80">Çevrimiçi</p>
+            </div>
+            <button onClick={() => setExpanded(false)} aria-label="Kapat" className="p-1 hover:opacity-80">
+              <X size={16} />
+            </button>
+          </div>
+          <div className="bg-[#e5ddd5] p-4">
+            <div className="rounded-lg bg-white p-3 shadow-sm">
+              <p className="text-sm text-gray-800">Merhaba 👋</p>
+              <p className="mt-1 text-sm text-gray-700">Projenizle ilgili bilgi almak ister misiniz?</p>
+              <p className="mt-2 text-[10px] text-gray-400">Genellikle birkaç dakika içinde yanıt veririz.</p>
+            </div>
+          </div>
+          <div className="p-3">
+            <a
+              href={whatsappUrl(WA_MESSAGE)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 bg-[hsl(120,40%,40%)] py-3 text-sm font-bold text-white hover:bg-[hsl(120,40%,35%)] transition-colors"
+            >
+              <MessageCircle size={16} />
+              WhatsApp'tan Yaz
+            </a>
+          </div>
         </div>
       )}
 
-      {/* Ana buton */}
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="WhatsApp ile yazın"
-        className="group flex items-center gap-2.5 rounded-full bg-[#25D366] py-3 pr-4 pl-3.5 shadow-lg transition-transform duration-200 hover:scale-[1.04] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366] motion-reduce:transition-none"
-      >
-        <MessageCircle size={20} className="text-white" aria-hidden="true" />
-        <span className="text-[11px] font-extrabold tracking-[.12em] text-white uppercase">WhatsApp</span>
-      </a>
+      {/* Floating button */}
+      <div className="flex items-end gap-2">
+        {expanded && (
+          <button
+            onClick={handleDismiss}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-600 shadow-md hover:bg-gray-300 transition-colors"
+            aria-label="Widget'ı kapat"
+          >
+            <X size={16} />
+          </button>
+        )}
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-[hsl(120,40%,40%)] text-white shadow-lg hover:bg-[hsl(120,40%,35%)] transition-all whatsapp-widget-enter"
+          aria-label={expanded ? 'WhatsApp penceresini kapat' : 'WhatsApp ile iletişime geç'}
+        >
+          {expanded ? <X size={24} /> : <MessageCircle size={24} />}
+        </button>
+      </div>
     </div>
   );
 }

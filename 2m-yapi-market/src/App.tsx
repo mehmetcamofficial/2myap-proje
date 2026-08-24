@@ -11,8 +11,14 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { ServiceImage } from '@/components/service-image';
 import NotFound from '@/pages/not-found';
 import { QuoteForm } from '@/components/quote-form';
-import { BeforeAfter } from '@/components/before-after';
+import { BeforeAfterSlider } from '@/components/before-after-slider';
 import { WhatsappWidget } from '@/components/whatsapp-widget';
+import { RoofSystemExplorer } from '@/components/roof-explorer';
+import { SteelAssembly } from '@/components/steel-assembly';
+import { PoolConstructionTimeline } from '@/components/pool-timeline';
+import { InsulationExplorer } from '@/components/insulation-explorer';
+import { MaterialStory } from '@/components/material-story';
+import { ServiceAreaVisual } from '@/components/service-area-map';
 import { BUSINESS, CONTACT, NAV, SITE, whatsappUrl } from '@/data/site';
 import { services, CATEGORY_LABELS } from '@/data/services';
 import { beforeAfter, processSteps, faqItems } from '@/data/content';
@@ -416,6 +422,15 @@ function ProcessSection() {
 
 /* ------------------------- BEFORE / AFTER ------------------------- */
 function BeforeAfterSection() {
+  const baImages = [{
+    id: 'ba-main',
+    beforeSrc: beforeAfter.before,
+    afterSrc: beforeAfter.after,
+    beforeAlt: `${beforeAfter.label} - Öncesi`,
+    afterAlt: `${beforeAfter.label} - Sonrası`,
+    label: beforeAfter.label,
+  }];
+
   return (
     <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center">
@@ -423,9 +438,9 @@ function BeforeAfterSection() {
           <p className="eyebrow">06 — ÖNCE / SONRA</p>
           <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Değişimi<br /><em>görün.</em></h2>
           <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Doğru uygulamanın bir yaşam alanında yaratabileceği değişimi keşfedin.</p>
-          <Link href="/iletisim" className="mt-6 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Keşif iste <ArrowRight size={14} /></Link>
+          <Link href="/iletisim" className="mt-6 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Keşif iste <span className="cta-arrow inline-block">→</span></Link>
         </div>
-        <BeforeAfter data={beforeAfter} />
+        <BeforeAfterSlider images={baImages} />
       </div>
     </section>
   );
@@ -550,8 +565,9 @@ function Home() {
         <ServicesSection />
         <ProcessSection />
         <BeforeAfterSection />
+        <MaterialStory />
         <MaterialCraft />
-        <ServiceAreaSection />
+        <ServiceAreaVisual />
         <StoreSection />
         <GoogleReviewsSection />
         <FaqSection />
@@ -655,6 +671,23 @@ function ApplicationsPage() {
 function ServiceDetail() {
   const [, params] = useRoute('/:slug');
   const service = services.find((s) => s.slug === params?.slug) || services[0];
+
+  const renderInteractiveModule = () => {
+    switch (service.slug) {
+      case 'cati-sistemleri':
+        return <RoofSystemExplorer />;
+      case 'celik-konstruksiyon':
+        return <SteelAssembly />;
+      case 'havuz-yapimi':
+        return <PoolConstructionTimeline />;
+      case 'dis-cephe':
+      case 'prefabrik':
+        return <InsulationExplorer />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <>
       <Meta title={service.seoTitle} description={service.seoDesc} path={service.href} service={service} />
@@ -685,6 +718,7 @@ function ServiceDetail() {
           </div>
         </div>
       </section>
+      {renderInteractiveModule()}
     </>
   );
 }
