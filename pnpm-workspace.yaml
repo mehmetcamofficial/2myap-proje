@@ -75,6 +75,7 @@ onlyBuiltDependencies:
   - esbuild
   - msw
   - unrs-resolver
+  - bcrypt
 
 overrides:
   esbuild: "0.27.3"

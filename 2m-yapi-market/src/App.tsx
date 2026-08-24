@@ -890,9 +890,46 @@ function Router() {
       <Route path="/uygulamalar" component={ApplicationsPage} />
       <Route path="/iletisim" component={ContactPage} />
       {services.map((s) => <Route key={s.id} path={s.href} component={ServiceDetail} />)}
+      <Route path="/admin" component={AdminApp} />
       <Route component={NotFound} />
     </Switch>
   );
+}
+
+/* --------------------------------- ADMIN ---------------------------------- */
+import { AuthProvider, useAuth } from '@/pages/admin/auth-context';
+import { AdminLogin } from '@/pages/admin/login';
+import { AdminLayout } from '@/pages/admin/layout';
+import { AdminDashboard } from '@/pages/admin/dashboard';
+import { AdminServicesPage } from '@/pages/admin/services';
+import { AdminSettingsPage } from '@/pages/admin/settings';
+import { AdminLeadsPage } from '@/pages/admin/leads';
+import { AdminBlogPage } from '@/pages/admin/blog';
+
+function AdminGuard({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="flex min-h-screen items-center justify-center"><div className="h-8 w-8 animate-spin border-2 border-[hsl(var(--primary))] border-t-transparent" /></div>;
+  if (!user) return <AdminLogin />;
+  return <AdminLayout>{children}</AdminLayout>;
+}
+
+function AdminRoutes() {
+  return (
+    <AdminGuard>
+      <Switch>
+        <Route path="/admin" component={AdminDashboard} />
+        <Route path="/admin/services" component={AdminServicesPage} />
+        <Route path="/admin/blog" component={AdminBlogPage} />
+        <Route path="/admin/leads" component={AdminLeadsPage} />
+        <Route path="/admin/settings" component={AdminSettingsPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </AdminGuard>
+  );
+}
+
+function AdminApp() {
+  return <AuthProvider><AdminRoutes /></AuthProvider>;
 }
 
 function App() {

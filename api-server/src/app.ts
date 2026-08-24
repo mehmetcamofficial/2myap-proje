@@ -2,7 +2,6 @@ import express, { type Express } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
-import interactiveModulesRouter from "./routes/interactive-modules";
 import { logger } from "./lib/logger";
 
 const app: Express = express();
@@ -31,6 +30,5 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
-app.use("/api", interactiveModulesRouter);
 
 export default app;
