@@ -13,12 +13,18 @@ const staticPaths = ['', '/hizmetler', '/uygulamalar', '/iletisim'];
 const servicesSrc = readFileSync(resolve(root, 'src/data/services.ts'), 'utf8');
 const slugs = [...servicesSrc.matchAll(/slug:\s*'([^']+)'/g)].map((m) => `/${m[1]}`);
 
-const urls = [...staticPaths, ...slugs]
-  .map((p) => `  <url><loc>${base}${p}</loc></url>`)
+const allPaths = [...staticPaths, ...slugs];
+
+const urls = allPaths
+  .map((p) => {
+    const priority = p === '' ? '1.0' : p.startsWith('/hizmetler') || p.startsWith('/uygulamalar') ? '0.8' : '0.7';
+    const changefreq = p === '' ? 'weekly' : 'monthly';
+    return `  <url>\n    <loc>${base}${p}</loc>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
+  })
   .join('\n');
 
 writeFileSync(
   resolve(root, 'public/sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
 );
-console.log(`sitemap.xml generated for ${base} (${staticPaths.length + slugs.length} urls)`);
+console.log(`sitemap.xml generated for ${base} (${allPaths.length} urls)`);

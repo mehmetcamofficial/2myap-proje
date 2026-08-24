@@ -905,6 +905,12 @@ import { AdminServicesPage } from '@/pages/admin/services';
 import { AdminSettingsPage } from '@/pages/admin/settings';
 import { AdminLeadsPage } from '@/pages/admin/leads';
 import { AdminBlogPage } from '@/pages/admin/blog';
+import { AdminFaqsPage } from '@/pages/admin/faqs';
+import { AdminApplicationsPage } from '@/pages/admin/applications';
+import { AdminGalleriesPage } from '@/pages/admin/galleries';
+import { AdminMediaPage } from '@/pages/admin/media';
+import { AdminNavigationPage } from '@/pages/admin/navigation';
+import { AdminAccountPage } from '@/pages/admin/account';
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -919,9 +925,15 @@ function AdminRoutes() {
       <Switch>
         <Route path="/admin" component={AdminDashboard} />
         <Route path="/admin/services" component={AdminServicesPage} />
+        <Route path="/admin/applications" component={AdminApplicationsPage} />
+        <Route path="/admin/faqs" component={AdminFaqsPage} />
+        <Route path="/admin/galleries" component={AdminGalleriesPage} />
+        <Route path="/admin/media" component={AdminMediaPage} />
         <Route path="/admin/blog" component={AdminBlogPage} />
+        <Route path="/admin/navigation" component={AdminNavigationPage} />
         <Route path="/admin/leads" component={AdminLeadsPage} />
         <Route path="/admin/settings" component={AdminSettingsPage} />
+        <Route path="/admin/account" component={AdminAccountPage} />
         <Route component={NotFound} />
       </Switch>
     </AdminGuard>

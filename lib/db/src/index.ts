@@ -10,7 +10,12 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Enable SSL for production connections (e.g., Neon, Supabase, Railway)
+const isProduction = process.env.NODE_ENV === 'production';
+export const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: isProduction ? { rejectUnauthorized: false } : false,
+});
 export const db = drizzle(pool, { schema });
 
 export * from "./schema";
