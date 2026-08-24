@@ -13,7 +13,7 @@ import NotFound from '@/pages/not-found';
 import { QuoteForm } from '@/components/quote-form';
 import { WhatsappWidget } from '@/components/whatsapp-widget';
 import { BUSINESS, CONTACT, NAV, SITE, whatsappUrl } from '@/data/site';
-import { services, CATEGORY_LABELS } from '@/data/services';
+import { services, CATEGORY_LABELS, serviceGroups } from '@/data/services';
 import { beforeAfter, processSteps, faqItems } from '@/data/content';
 
 const BeforeAfterSlider = lazy(() => import('@/components/before-after-slider').then(m => ({ default: m.BeforeAfterSlider })));
@@ -172,46 +172,47 @@ function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/.9)] backdrop-blur-md">
-        <div className={`mx-auto flex ${scrolled ? 'h-16' : 'h-20'} max-w-[1240px] items-center justify-between px-5 md:px-8`}>
+      <header className={`sticky top-0 z-50 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/.95)] backdrop-blur-md transition-all duration-300 ${scrolled ? 'shadow-[var(--shadow-sm)]' : ''}`}>
+        <div className={`mx-auto flex ${scrolled ? 'h-14' : 'h-18'} max-w-[1240px] items-center justify-between px-5 transition-all duration-300 md:px-8`}>
           <Mark />
-          <nav aria-label="Ana menü" className="hidden items-center gap-6 md:flex">
+          <nav aria-label="Ana menü" className="hidden items-center gap-1 lg:flex">
             {NAV.map((n) => {
               const active = isActive(n.href);
               return (
                 <Link
                   key={n.label}
                   href={n.href}
-                  className={`text-[12px] font-semibold uppercase tracking-[.12em] ${active ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))]'}`}
+                  className={`px-3 py-2 text-[11px] font-bold uppercase tracking-[.1em] transition-colors ${active ? 'text-[hsl(var(--primary))]' : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'}`}
                 >
                   {n.label}
                 </Link>
               );
             })}
           </nav>
-          <div className="hidden items-center gap-3 md:flex">
-            <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[hsl(var(--accent))] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--accent))] hover:bg-[hsl(var(--accent))] hover:text-[hsl(var(--accent-foreground))]"><MessageCircle size={15} /> WhatsApp</a>
-            <Link href="/iletisim" className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-4 py-2.5 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary-foreground))]">Keşif iste <ArrowRight size={15} /></Link>
+          <div className="hidden items-center gap-2 lg:flex">
+            <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 border border-[hsl(var(--border))] px-3 py-2 text-[10px] font-bold uppercase tracking-[.1em] text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary))] hover:text-[hsl(var(--primary))] transition-colors"><MessageCircle size={13} /> WhatsApp</a>
+            <Link href="/iletisim" className="inline-flex items-center gap-1.5 bg-[hsl(var(--primary))] px-4 py-2 text-[10px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary)/.9)] transition-colors">Keşif / Teklif Al <ArrowRight size={13} /></Link>
           </div>
-          <button type="button" aria-label="Menü aç" aria-expanded={open} onClick={() => setOpen(!open)} className="p-2 md:hidden">{open ? <X size={22} /> : <Menu size={22} />}</button>
+          <button type="button" aria-label="Menü aç" aria-expanded={open} onClick={() => setOpen(!open)} className="p-2 lg:hidden">{open ? <X size={22} /> : <Menu size={22} />}</button>
         </div>
       </header>
       {open && (
         <nav aria-label="Mobil menü" className="fixed inset-0 z-50 flex flex-col justify-between bg-[hsl(var(--foreground))] px-7 py-8 text-[hsl(var(--background))]">
           <button ref={closeRef} type="button" aria-label="Menü kapat" onClick={() => setOpen(false)} className="self-end"><X size={26} /></button>
-          <div className="flex flex-col gap-2">
-            <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] opacity-60">ANA MENÜ</p>
+          <div className="flex flex-col gap-1">
+            <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] opacity-50 mb-2">Ana Menü</p>
             {NAV.map((n) => {
               const active = isActive(n.href);
               return (
-                <Link key={n.label} href={n.href} onClick={() => setOpen(false)} className={`border-b border-[hsl(var(--background)/.14)] py-3 text-xl font-bold uppercase ${active ? 'text-[hsl(var(--primary))]' : ''}`}>{n.label}</Link>
+                <Link key={n.label} href={n.href} onClick={() => setOpen(false)} className={`border-b border-[hsl(var(--background)/.1)] py-3 text-lg font-bold uppercase ${active ? 'text-[hsl(var(--primary))]' : ''}`}>{n.label}</Link>
               );
             })}
           </div>
           <div className="flex flex-col gap-3 py-4">
             <a href={`tel:${CONTACT.phoneRaw}`} className="flex items-center gap-3 text-sm"><Phone size={17} /> {CONTACT.phoneDisplay}</a>
             <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 text-sm"><MessageCircle size={17} /> WhatsApp</a>
-            <p className="text-xs opacity-70">Merkez: Kuşadası · Hizmet: Ege Bölgesi</p>
+            <Link href="/iletisim" onClick={() => setOpen(false)} className="mt-2 inline-flex items-center justify-center gap-2 bg-[hsl(var(--primary))] px-5 py-3 text-xs font-bold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Keşif / Teklif Al <ArrowRight size={14} /></Link>
+            <p className="text-xs opacity-50 mt-2">Merkez: Kuşadası · Hizmet: Ege Bölgesi</p>
           </div>
         </nav>
       )}
@@ -220,39 +221,41 @@ function Header() {
 }
 const Footer = memo(function Footer() {
   return (
-    <footer className="border-t border-[hsl(var(--border))] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]">
-      <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-14 md:grid-cols-[1.3fr_1fr_1fr_1.2fr] md:px-8">
+    <footer className="border-t border-[hsl(var(--border))] bg-[hsl(var(--foreground))] text-[hsl(var(--background))]">
+      <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-14 md:grid-cols-[1.4fr_1fr_1fr_1.2fr] md:px-8">
         <div>
           <Mark />
-          <p className="mt-6 max-w-sm text-sm leading-7 text-[hsl(var(--accent-foreground)/.72)]">Merkezimiz Kuşadası’nda. Tadilat, yapı ve uygulama işlerini Ege Bölgesi genelinde tek muhatapta yürütüyoruz.</p>
+          <p className="mt-5 max-w-xs text-xs leading-6 opacity-60">Kuşadası merkezli 2M Yapı Market Proje; tadilat, çelik, çatı, cephe ve havuz uygulamalarını Ege Bölgesi genelinde tek muhatapta yürütür.</p>
         </div>
         <div>
-          <p className="font-mono-brand text-[10px] uppercase tracking-[.2em]">Kısayollar</p>
-          <div className="mt-4 grid gap-3 text-sm">
+          <p className="font-mono-brand text-[9px] uppercase tracking-[.2em] opacity-50">Kurumsal</p>
+          <div className="mt-4 grid gap-2.5 text-xs opacity-70">
             <Link href="/hizmetler">Hizmetler</Link>
-            <Link href="/uygulamalar">Uygulamalar</Link>
+            <Link href="/uygulamalar">Uygulama Alanları</Link>
+            <Link href="/galeri">Projeler & Galeri</Link>
+            <Link href="/blog">Blog & Rehber</Link>
             <Link href="/iletisim">İletişim & Keşif</Link>
           </div>
         </div>
         <div>
-          <p className="font-mono-brand text-[10px] uppercase tracking-[.2em]">Hizmetler</p>
-          <div className="mt-4 grid gap-3 text-sm">
-            {services.slice(0, 5).map((s) => <Link key={s.id} href={s.href}>{s.name}</Link>)}
+          <p className="font-mono-brand text-[9px] uppercase tracking-[.2em] opacity-50">Hizmetler</p>
+          <div className="mt-4 grid gap-2.5 text-xs opacity-70">
+            {serviceGroups.slice(0, 5).map((g) => <span key={g.id}>{g.name}</span>)}
           </div>
         </div>
         <div>
-          <p className="font-mono-brand text-[10px] uppercase tracking-[.2em]">İletişim</p>
-          <div className="mt-4 text-sm leading-7 text-[hsl(var(--accent-foreground)/.8)]">
-            <p>2M Yapı Market Proje Bianca</p>
+          <p className="font-mono-brand text-[9px] uppercase tracking-[.2em] opacity-50">İletişim</p>
+          <div className="mt-4 text-xs leading-6 opacity-70">
+            <p className="font-bold">2M Yapı Market Proje Bianca</p>
             <p>TNR Corner Loft</p>
             <p>Kuşadası Davutlar Yolu No:75</p>
             <p>Soğucak · 09400 Kuşadası / AYDIN</p>
-            <a href={`tel:${CONTACT.phoneRaw}`} className="mt-3 inline-block py-1">{CONTACT.phoneDisplay}</a>
-            <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="mt-2 flex items-center gap-2 py-1"><MessageCircle size={15} /> WhatsApp</a>
+            <a href={`tel:${CONTACT.phoneRaw}`} className="mt-2 inline-block py-1">{CONTACT.phoneDisplay}</a>
+            <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="mt-1 flex items-center gap-2 py-1"><MessageCircle size={13} /> WhatsApp</a>
           </div>
         </div>
       </div>
-      <div className="mx-auto flex max-w-[1240px] flex-col gap-2 border-t border-[hsl(var(--accent-foreground)/.14)] px-5 py-5 font-mono-brand text-[10px] md:flex-row md:justify-between md:px-8">
+      <div className="mx-auto flex max-w-[1240px] flex-col gap-2 border-t border-[hsl(var(--background)/.1)] px-5 py-5 font-mono-brand text-[9px] opacity-40 md:flex-row md:justify-between md:px-8">
         <span>© {SITE.name}</span>
         <span>Kuşadası merkez · Tüm Ege Bölgesi</span>
       </div>
@@ -263,9 +266,9 @@ const Footer = memo(function Footer() {
 const BottomBar = memo(function BottomBar() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-45 grid grid-cols-3 border-t border-[hsl(var(--border))] bg-[hsl(var(--card)/.96)] pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
-      <a href={`tel:${CONTACT.phoneRaw}`} className="flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-bold uppercase"><Phone size={16} /> Ara</a>
-      <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-bold uppercase"><MessageCircle size={16} /> WhatsApp</a>
-      <Link href="/iletisim" className="flex flex-col items-center justify-center gap-1 bg-[hsl(var(--primary))] py-2.5 text-[10px] font-bold uppercase text-[hsl(var(--primary-foreground))]"><ArrowRight size={16} /> Keşif iste</Link>
+      <a href={`tel:${CONTACT.phoneRaw}`} className="flex flex-col items-center justify-center gap-0.5 py-2 text-[9px] font-bold uppercase"><Phone size={15} /> Ara</a>
+      <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center gap-0.5 py-2 text-[9px] font-bold uppercase"><MessageCircle size={15} /> WhatsApp</a>
+      <Link href="/iletisim" className="flex flex-col items-center justify-center gap-0.5 bg-[hsl(var(--primary))] py-2 text-[9px] font-bold uppercase text-[hsl(var(--primary-foreground))]"><ArrowRight size={15} /> Keşif Al</Link>
     </div>
   );
 });
@@ -322,42 +325,63 @@ function Hero() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative flex min-h-[92vh] items-center overflow-hidden">
+    <section ref={sectionRef} className="relative flex min-h-[88vh] items-center overflow-hidden">
       {/* Background image layer — moves most */}
       <div
         className="absolute inset-[-20px] transition-none will-change-transform"
         style={{ transform: `translate(${mouse.x}px, ${mouse.y}px) scale(1.05)` }}
       >
-        <ServiceImage src={HERO_IMG} alt="Villa ve dış mekân uygulamasına dair görsel" className="h-full w-full object-cover" loading="eager" />
+        <ServiceImage src={HERO_IMG} alt="Yapı ve uygulama çalışması" className="h-full w-full object-cover" loading="eager" />
       </div>
-      <div className="absolute inset-0 bg-[hsl(var(--accent))] opacity-40" />
-      {/* Architectural grid layer — moves at half amplitude */}
-      <div
-        className="absolute inset-[-10px] architectural-lines opacity-30 will-change-transform"
-        style={{ transform: `translate(${mouse.x * 0.5}px, ${mouse.y * 0.5}px)` }}
-      />
+      <div className="absolute inset-0 bg-[hsl(var(--foreground))] opacity-50" />
       {/* Content layer — stable */}
-      <div className="relative mx-auto max-w-[1240px] px-5 pt-20 pb-24 md:px-8">
-        <p className={`font-mono-brand text-[11px] tracking-[.28em] uppercase text-[hsl(var(--accent-foreground))] transition-all duration-700 delay-200 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+      <div className="relative mx-auto max-w-[1240px] px-5 pt-24 pb-20 md:px-8">
+        <p className={`font-mono-brand text-[10px] tracking-[.28em] uppercase text-[hsl(var(--background)/.7)] transition-all duration-700 delay-200 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           2M YAPI MARKET PROJE · KUŞADASI
         </p>
-        <h1 className="mt-6 font-display text-[clamp(2.8rem,8vw,7rem)] leading-[.85] tracking-[-.04em] text-[hsl(var(--background))]">
-          <span className={`block transition-all duration-500 delay-300 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>Tadilat, çelik,</span>
-          <span className={`block transition-all duration-500 delay-500 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>çatı & <em>havuz</em></span>
-          <span className={`block transition-all duration-500 delay-700 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>tek noktada.</span>
+        <h1 className="mt-6 font-display text-[clamp(2.4rem,7vw,6rem)] leading-[.88] tracking-[-.03em] text-[hsl(var(--background))]">
+          <span className={`block transition-all duration-500 delay-300 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>Ege Bölgesi'nde</span>
+          <span className={`block transition-all duration-500 delay-500 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>Yapı ve Uygulama</span>
+          <span className={`block transition-all duration-500 delay-700 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>Çözümleri.</span>
         </h1>
-        <p className={`mt-8 max-w-[560px] text-lg leading-8 text-[hsl(var(--background)/.85)] transition-all duration-600 delay-[800ms] ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          Malzemeden uygulamaya; çatı, pergola, çelik ve tadilat işlerini tek muhatapta yürütüyoruz. Tüm Ege Bölgesi'nde hizmet.
+        <p className={`mt-8 max-w-[540px] text-base leading-7 text-[hsl(var(--background)/.8)] transition-all duration-600 delay-[800ms] ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          Tadilattan çelik konstrüksiyona, çatıdan dış cepheye; malzeme, usta ve uygulamayı tek noktada buluşturuyoruz.
         </p>
-        <div className={`mt-10 flex flex-wrap items-center gap-4 transition-all duration-600 delay-[950ms] ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <Link href="/iletisim" className="inline-flex items-center gap-3 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Projenizi anlatın <ArrowRight size={16} /></Link>
-          <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border border-[hsl(var(--background)/.4)] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--background))]"><MessageCircle size={16} /> WhatsApp</a>
+        <div className={`mt-10 flex flex-wrap items-center gap-3 transition-all duration-600 delay-[950ms] ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <Link href="/hizmetler" className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-6 py-3.5 text-[11px] font-bold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary)/.9)] transition-colors">Hizmetleri İncele <ArrowRight size={15} /></Link>
+          <Link href="/iletisim" className="inline-flex items-center gap-2 border border-[hsl(var(--background)/.35)] px-6 py-3.5 text-[11px] font-bold uppercase tracking-[.12em] text-[hsl(var(--background))] hover:bg-[hsl(var(--background)/.1)] transition-colors">Projenizi Anlatın</Link>
+          <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[hsl(var(--background)/.35)] px-5 py-3.5 text-[11px] font-bold uppercase tracking-[.12em] text-[hsl(var(--background))] hover:bg-[hsl(var(--background)/.1)] transition-colors"><MessageCircle size={14} /> WhatsApp</a>
         </div>
-        <p className={`mt-6 flex flex-wrap items-center gap-3 text-sm text-[hsl(var(--background)/.8)] transition-all duration-500 delay-[1100ms] ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <Phone size={15} /> <a href={`tel:${CONTACT.phoneRaw}`} className="underline decoration-[hsl(var(--background)/.4)] underline-offset-2">{CONTACT.phoneDisplay}</a>
-          <span className="opacity-60">·</span>
-          <span className="font-mono-brand text-[11px] tracking-[.16em] uppercase opacity-90">Kuşadası merkezli · Tüm Ege Bölgesi</span>
+        <p className={`mt-6 flex flex-wrap items-center gap-3 text-sm text-[hsl(var(--background)/.7)] transition-all duration-500 delay-[1100ms] ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <Phone size={14} /> <a href={`tel:${CONTACT.phoneRaw}`} className="underline decoration-[hsl(var(--background)/.3)] underline-offset-2 hover:decoration-[hsl(var(--background)/.7)] transition-colors">{CONTACT.phoneDisplay}</a>
+          <span className="opacity-40">·</span>
+          <span className="font-mono-brand text-[10px] tracking-[.14em] uppercase opacity-80">Kuşadası merkezli · Tüm Ege Bölgesi</span>
         </p>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------- TRUST STRIP --------------------------------- */
+function TrustStrip() {
+  const items = [
+    'Yapı Malzemesi + Uygulama',
+    'Ege Bölgesi Genelinde Hizmet',
+    'Farklı Usta Disiplinleri',
+    'Keşif & Teklif Süreci',
+    'Tek Muhatap',
+  ];
+  return (
+    <section className="border-b border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+      <div className="mx-auto max-w-[1240px] px-5 py-5 md:px-8">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          {items.map((item, i) => (
+            <span key={item} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.12em] text-[hsl(var(--muted-foreground))]">
+              {i > 0 && <span className="hidden sm:inline text-[hsl(var(--border))]">|</span>}
+              {item}
+            </span>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -367,19 +391,24 @@ function Hero() {
 function AboutSection() {
   return (
     <section id="hakkimizda" className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
-      <div className="grid gap-10 md:grid-cols-2 md:items-stretch">
+      <div className="grid gap-10 md:grid-cols-2 md:items-start">
         <div>
-          <p className="eyebrow">01 — MALZEME · USTA · UYGULAMA</p>
-          <h2 className="mt-5 font-display text-5xl leading-[.9] md:text-7xl">Malzeme. Usta.<br /><em>Uygulama.</em><br />Tek muhatap.</h2>
-          <p className="mt-8 max-w-md text-base leading-8 text-[hsl(var(--muted-foreground))]">2M Yapı Market Proje Bianca; malzeme, uygulama ve proje işini tek muhatapta toplar. Merkezimiz Kuşadası’nda, hizmet alanımız tüm Ege Bölgesi.</p>
+          <p className="eyebrow">Kurumsal</p>
+          <h2 className="mt-5 font-display text-4xl leading-[.92] md:text-6xl">Bir yapı marketten<br /><em>daha fazlası.</em></h2>
+          <p className="mt-8 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">
+            2M Yapı Market Proje; malzeme tedariki, uygulama, tadilat ve yapı hizmetlerini aynı organizasyon altında bir araya getirir.
+          </p>
+          <p className="mt-4 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">
+            Farklı iş kalemlerini tek tek yönetmek yerine, ihtiyaca göre süreci bütün olarak planlıyoruz.
+          </p>
           <div className="mt-8 flex flex-wrap gap-2">
-            <span className="border border-[hsl(var(--border))] px-4 py-2 text-sm">Merkez: Kuşadası</span>
-            <span className="border border-[hsl(var(--primary))] px-4 py-2 text-sm text-[hsl(var(--primary))]">Hizmet: Ege Bölgesi</span>
+            <span className="border border-[hsl(var(--border))] px-4 py-2 text-[11px] font-bold uppercase tracking-[.08em]">Merkez: Kuşadası</span>
+            <span className="border border-[hsl(var(--primary))] px-4 py-2 text-[11px] font-bold uppercase tracking-[.08em] text-[hsl(var(--primary))]">Hizmet: Ege Bölgesi</span>
           </div>
         </div>
         <div className="relative">
-          <ServiceImage src={HERO_IMG} alt="Dış mekân ve yapı uygulamasına dair görsel" className="aspect-[4/5] w-full object-cover" loading="lazy" />
-          <div className="absolute -left-3 -bottom-3 h-20 w-20 border bg-[hsl(var(--accent))] opacity-30" />
+          <ServiceImage src={HERO_IMG} alt="Yapı uygulaması" className="aspect-[4/3] w-full object-cover" loading="lazy" />
+          <div className="absolute -left-3 -bottom-3 h-16 w-16 border-2 border-[hsl(var(--primary)/.3)]" />
         </div>
       </div>
     </section>
@@ -388,30 +417,32 @@ function AboutSection() {
 
 /* ------------------------- UYGULAMA ALANLARI -------------------------- */
 function Showcase() {
-  const showcaseItems = services.slice(0, 6);
   return (
     <section id="uygulama" className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="flex items-end justify-between gap-5">
         <div>
-          <p className="eyebrow">02 — UYGULAMA ALANLARI</p>
-          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Neler<br /><em>yapıyoruz?</em></h2>
+          <p className="eyebrow">Hizmet Alanlarımız</p>
+          <h2 className="mt-4 font-display text-4xl leading-[.92] md:text-6xl">Uygulama<br /><em>grupları.</em></h2>
         </div>
-        <Link href="/uygulamalar" className="group inline-flex items-center gap-2 border-b border-[hsl(var(--border))] pb-1 text-xs font-extrabold uppercase tracking-[.13em]">Tüm uygulamaları gör <ArrowRight size={15} /></Link>
+        <Link href="/hizmetler" className="group inline-flex items-center gap-2 border-b border-[hsl(var(--border))] pb-1 text-[10px] font-bold uppercase tracking-[.12em] text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary))] hover:text-[hsl(var(--primary))] transition-colors">Tüm hizmetleri gör <ArrowRight size={13} /></Link>
       </div>
-      <div className="mt-12 flex flex-col gap-10">
-        {showcaseItems.map((s, idx) => (
-          <article key={s.id} className="grid md:grid-cols-[1.2fr_1fr] items-center gap-8">
-            <Link href={s.href} className="group relative aspect-[4/3] overflow-hidden">
-              <ServiceImage src={s.applicationImage} alt={s.applicationImageAlt} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" />
-              <span className="absolute top-3 left-3 font-mono-brand text-xs">{String(idx + 1).padStart(2, '0')}</span>
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {serviceGroups.map((group) => {
+          const firstService = services.find(s => group.services.some(gs => s.name.includes(gs.split(' ')[0])));
+          return (
+            <Link key={group.id} href={firstService?.href || '/hizmetler'} className="group border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 transition-all hover:border-[hsl(var(--primary)/.5)]">
+              <h3 className="text-lg font-bold tracking-[-.02em]">{group.name}</h3>
+              <p className="mt-3 text-xs leading-6 text-[hsl(var(--muted-foreground))]">{group.description}</p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {group.services.slice(0, 4).map((s) => (
+                  <span key={s} className="border border-[hsl(var(--border))] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[.06em] text-[hsl(var(--muted-foreground))]">{s}</span>
+                ))}
+                {group.services.length > 4 && <span className="px-1 py-0.5 text-[9px] font-bold text-[hsl(var(--muted-foreground))]">+{group.services.length - 4}</span>}
+              </div>
+              <span className="mt-4 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary))] group-hover:gap-2.5 transition-all">İncele <ArrowRight size={12} /></span>
             </Link>
-            <div className="md:pl-6">
-              <p className="font-mono-brand text-[10px] uppercase tracking-[.2em] text-[hsl(var(--muted-foreground))]">{CATEGORY_LABELS[s.category]}</p>
-              <h3 className="mt-4 font-display text-4xl md:text-6xl">{s.name}</h3>
-              <Link href={s.href} className="mt-4 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Detayı gör <ArrowRight size={14} /></Link>
-            </div>
-          </article>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -423,10 +454,10 @@ function ServicesSection() {
   return (
     <section className="bg-[hsl(var(--foreground))] text-[hsl(var(--background))]">
       <div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
-        <p className="eyebrow text-[hsl(var(--background)/.5)]">03 — HİZMETLER</p>
-        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">İhtiyacınız neyse,<br /><em>oradan başlayalım.</em></h2>
+        <p className="eyebrow text-[hsl(var(--background)/.4)]">Hizmetlerimiz</p>
+        <h2 className="mt-4 font-display text-4xl leading-[.92] md:text-6xl">İhtiyacınız neyse,<br /><em>oradan başlayalım.</em></h2>
         <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_1fr]">
-          <div className="border-t border-[hsl(var(--background)/.16)]">
+          <div className="border-t border-[hsl(var(--background)/.12)]">
             {services.map((s, i) => {
               const isAct = s.id === activeId;
               const SIcon = s.icon;
@@ -436,25 +467,25 @@ function ServicesSection() {
                   type="button"
                   onMouseEnter={() => setActiveId(s.id)}
                   onFocus={() => setActiveId(s.id)}
-                  className={`flex w-full items-center justify-between gap-4 border-b border-[hsl(var(--background)/.16)] py-5 text-left ${isAct ? 'text-[hsl(var(--primary))]' : 'hover:text-[hsl(var(--background)/.7)]'}`}
+                  className={`flex w-full items-center justify-between gap-4 border-b border-[hsl(var(--background)/.12)] py-4 text-left transition-colors ${isAct ? 'text-[hsl(var(--primary))]' : 'hover:text-[hsl(var(--background)/.7)]'}`}
                 >
-                  <span className="flex items-center gap-4">
-                    <span className="font-mono-brand text-xs opacity-60">{String(i + 1).padStart(2, '0')}</span>
-                    <SIcon size={18} />
-                    <span className="text-xl font-bold tracking-[-.02em]">{s.name}</span>
+                  <span className="flex items-center gap-3">
+                    <span className="font-mono-brand text-[10px] opacity-50">{String(i + 1).padStart(2, '0')}</span>
+                    <SIcon size={16} />
+                    <span className="text-lg font-bold tracking-[-.02em]">{s.name}</span>
                   </span>
-                  <ArrowRight size={18} className={`shrink-0 transition ${isAct ? 'opacity-100' : 'opacity-30'}`} />
+                  <ArrowRight size={16} className={`shrink-0 transition ${isAct ? 'opacity-100' : 'opacity-20'}`} />
                 </button>
               );
             })}
           </div>
           <div className="relative overflow-hidden">
             <ServiceImage key={active.id} src={active.image} alt={active.imageAlt} className="aspect-[4/5] w-full object-cover transition-opacity duration-500" loading="lazy" />
-            <div className="absolute bottom-0 left-0 right-0 bg-[hsl(var(--foreground)/.7)] p-5 backdrop-blur">
-              <p className="text-xs text-[hsl(var(--primary))]">{CATEGORY_LABELS[active.category]}</p>
-              <h3 className="mt-1 font-display text-3xl">{active.name}</h3>
-              <p className="mt-2 text-sm leading-6 opacity-80">{active.short}</p>
-              <Link href={active.href} className="mt-3 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Hizmeti incele <ArrowRight size={12} /></Link>
+            <div className="absolute bottom-0 left-0 right-0 bg-[hsl(var(--foreground)/.8)] p-5 backdrop-blur-sm">
+              <p className="text-[10px] font-bold uppercase tracking-[.12em] text-[hsl(var(--primary))]">{CATEGORY_LABELS[active.category]}</p>
+              <h3 className="mt-1 font-display text-2xl">{active.name}</h3>
+              <p className="mt-2 text-xs leading-6 opacity-75">{active.short}</p>
+              <Link href={active.href} className="mt-3 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary))]">Hizmeti incele <ArrowRight size={11} /></Link>
             </div>
           </div>
         </div>
@@ -474,17 +505,17 @@ function MaterialCraft() {
     <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="grid gap-10 md:grid-cols-[1fr_1.1fr] md:items-start">
         <div>
-          <p className="eyebrow">04 — AVANTAJ</p>
-          <h2 className="mt-4 font-display text-5xl leading-[.88] md:text-7xl">Malzeme. Usta.<br /><em>Uygulama.</em><br />Tek muhatap.</h2>
+          <p className="eyebrow">Avantaj</p>
+          <h2 className="mt-4 font-display text-4xl leading-[.92] md:text-6xl">Malzeme. Usta.<br /><em>Uygulama.</em><br />Tek muhatap.</h2>
         </div>
         <div className="border-t border-[hsl(var(--border))]">
           {rows.map(([t, d]) => (
-            <div key={t} className="grid gap-2 border-b border-[hsl(var(--border))] py-6 sm:grid-cols-[160px_1fr]">
-              <h3 className="text-xl font-bold text-[hsl(var(--primary))]">{t}</h3>
-              <p className="text-sm leading-7 text-[hsl(var(--muted-foreground))]">{d}</p>
+            <div key={t} className="grid gap-2 border-b border-[hsl(var(--border))] py-5 sm:grid-cols-[140px_1fr]">
+              <h3 className="text-base font-bold text-[hsl(var(--primary))]">{t}</h3>
+              <p className="text-xs leading-6 text-[hsl(var(--muted-foreground))]">{d}</p>
             </div>
           ))}
-          <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 border border-[hsl(var(--primary))] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">WhatsApp’tan yaz <MessageCircle size={15} /></a>
+          <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="mt-5 inline-flex items-center gap-2 border border-[hsl(var(--primary))] px-5 py-2.5 text-[10px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] transition-colors">WhatsApp'tan yaz <MessageCircle size={13} /></a>
         </div>
       </div>
     </section>
@@ -495,17 +526,17 @@ function ProcessSection() {
   return (
     <section className="bg-[hsl(var(--secondary))]">
       <div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
-        <div className="grid gap-10 md:grid-cols-2 md:items-center">
+        <div className="grid gap-10 md:grid-cols-2 md:items-start">
           <div>
-            <p className="eyebrow">05 — YAKLAŞIMIMIZ</p>
-            <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Karmaşayı<br /><em>azaltırız.</em></h2>
-            <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Net bir süreç, doğru planlama ve tek muhatap. İhtiyaçtan uygulamaya kadar her adımı anlaşılır şekilde ilerletiyoruz.</p>
+            <p className="eyebrow">Nasıl Çalışıyoruz</p>
+            <h2 className="mt-4 font-display text-4xl leading-[.92] md:text-6xl">Net süreç,<br /><em>kontrollü uygulama.</em></h2>
+            <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">İhtiyaçtan teslimatна kadar her adım planlı ve şeffaf ilerler. Tek muhatap, net takip.</p>
           </div>
           <div className="border-t border-[hsl(var(--border))]">
             {processSteps.map(([num, title, text]) => (
-              <article key={num} className="grid gap-3 border-b border-[hsl(var(--border))] py-6 sm:grid-cols-[60px_1fr]">
-                <span className="font-mono-brand text-sm text-[hsl(var(--primary))]">{num}</span>
-                <div><h3 className="text-2xl font-bold tracking-[-.04em]">{title}</h3><p className="mt-2 text-sm leading-7 text-[hsl(var(--muted-foreground))]">{text}</p></div>
+              <article key={num} className="grid gap-3 border-b border-[hsl(var(--border))] py-5 sm:grid-cols-[50px_1fr]">
+                <span className="font-mono-brand text-sm font-bold text-[hsl(var(--primary))]">{num}</span>
+                <div><h3 className="text-lg font-bold tracking-[-.02em]">{title}</h3><p className="mt-1.5 text-xs leading-6 text-[hsl(var(--muted-foreground))]">{text}</p></div>
               </article>
             ))}
           </div>
@@ -521,17 +552,16 @@ function BeforeAfterSection() {
     <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center">
         <div>
-          <p className="eyebrow">06 — DÖNÜŞÜM ÖRNEĞİ</p>
-          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Değişimi<br /><em>görün.</em></h2>
-          <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Doğru uygulamanın bir yapıda yaratabileceği dönüşümü karşılaştırın.</p>
-          <p className="mt-4 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Her proje, mevcut alanın ve ihtiyacın değerlendirilmesiyle başlar. Keşif sürecinde malzeme, kapsam ve uygulama adımları netleştirilir.</p>
-          <Link href="/iletisim" className="mt-6 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Keşif iste <span className="cta-arrow inline-block">→</span></Link>
+          <p className="eyebrow">Dönüşüm</p>
+          <h2 className="mt-4 font-display text-4xl leading-[.92] md:text-6xl">Değişimi<br /><em>görün.</em></h2>
+          <p className="mt-6 max-w-md text-xs leading-7 text-[hsl(var(--muted-foreground))]">Doğru uygulamanın bir yapıda yaratabileceği dönüşümü inceleyin. Her proje, mevcut alanın değerlendirilmesiyle başlar.</p>
+          <Link href="/iletisim" className="mt-5 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-[10px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary))]">Keşif iste <ArrowRight size={12} /></Link>
         </div>
         <div className="relative overflow-hidden">
           <ServiceImage src={beforeAfter.image} alt={beforeAfter.alt} className="aspect-[4/3] w-full object-cover" loading="lazy" />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
-            <p className="font-mono-brand text-xs text-white/80">{beforeAfter.label}</p>
-            <p className="mt-1 text-sm font-semibold text-white">Tadilat ve yenileme uygulaması</p>
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-5">
+            <p className="font-mono-brand text-[10px] text-white/70">{beforeAfter.label}</p>
+            <p className="mt-1 text-xs font-bold text-white">Tadilat ve yenileme uygulaması</p>
           </div>
         </div>
       </div>
@@ -544,12 +574,11 @@ function ServiceAreaSection() {
   return (
     <section className="bg-[hsl(var(--secondary))]">
       <div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
-        <p className="eyebrow">HİZMET BÖLGEMLİZ</p>
-        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Kuşadası’ndan<br /><em>tüm Ege’ye.</em></h2>
-        <p className="mt-6 max-w-xl text-base leading-8 text-[hsl(var(--muted-foreground))]">Merkezimiz Kuşadası’nda. Tadilat, yapı ve uygulama işleri için Ege Bölgesi genelinde projeleri değerlendiriyoruz.</p>
-        <p className="mt-4 max-w-xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">İşin kapsamına ve bulunduğunuz bölgeye göre keşif ve uygulama planlaması yapıyoruz.</p>
-        <Link href="/iletisim" className="mt-8 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Projenizi anlatın <ArrowRight size={16} /></Link>
-        <p className="mt-8 font-mono-brand text-[11px] uppercase tracking-[.14em] text-[hsl(var(--muted-foreground))]">
+        <p className="eyebrow">Hizmet Bölgemiz</p>
+        <h2 className="mt-4 font-display text-4xl leading-[.92] md:text-6xl">Kuşadası merkezli.<br /><em>Tüm Ege Bölgesi.</em></h2>
+        <p className="mt-6 max-w-xl text-sm leading-7 text-[hsl(var(--muted-foreground))]">Aydın, İzmir, Muğla, Manisa, Denizli ve Ege Bölgesi genelindeki proje ve uygulama taleplerini işin kapsamına göre değerlendiriyoruz.</p>
+        <Link href="/iletisim" className="mt-8 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-5 py-3 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary)/.9)] transition-colors">Projenizi anlatın <ArrowRight size={14} /></Link>
+        <p className="mt-6 font-mono-brand text-[10px] uppercase tracking-[.12em] text-[hsl(var(--muted-foreground))]">
           {CONTACT.serviceProvinces.join(' · ')} ve Ege Bölgesi
         </p>
       </div>
@@ -560,25 +589,25 @@ function ServiceAreaSection() {
 /* ------------------------------ STORE / MAP -------------------------------- */
 function StoreSection() {
   return (
-    <section className="bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]">
+    <section className="bg-[hsl(var(--foreground))] text-[hsl(var(--background))]">
       <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-20 md:grid-cols-2 md:items-center md:px-8 md:py-28">
         <div>
-          <p className="font-mono-brand text-[11px] uppercase tracking-[.25em] opacity-70">07 — MERKEZİMİZ</p>
-          <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Merkezimiz<br /><em>Kuşadası’nda.</em></h2>
-          <p className="mt-6 max-w-md text-sm leading-7 opacity-80">Bizi yerinde ziyaret edebilir veya Ege Bölgesi’ndeki projeniz için telefon ve WhatsApp üzerinden bize ulaşabilirsiniz.</p>
+          <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] opacity-50">Merkezimiz</p>
+          <h2 className="mt-4 font-display text-4xl leading-[.92] md:text-6xl">Merkezimiz<br /><em>Kuşadası'nda.</em></h2>
+          <p className="mt-6 max-w-md text-sm leading-7 opacity-70">Soğucak'taki merkezimizden Ege Bölgesi genelindeki yapı ve uygulama taleplerini değerlendiriyoruz.</p>
           <p className="mt-6 text-sm font-bold">2M Yapı Market Proje Bianca</p>
-          <p className="mt-2 text-sm">TNR Corner Loft</p>
-          <p className="text-sm">Soğucak, Kuşadası Davutlar Yolu No:75</p>
-          <p className="text-sm">09400 Kuşadası / AYDIN</p>
+          <p className="mt-2 text-xs opacity-70">TNR Corner Loft</p>
+          <p className="text-xs opacity-70">Soğucak, Kuşadası Davutlar Yolu No:75</p>
+          <p className="text-xs opacity-70">09400 Kuşadası / AYDIN</p>
           <p className="mt-3 text-sm">{CONTACT.phoneDisplay}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <a href={BUSINESS.mapsDirections} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary-foreground))]">Yol tarifi al <ArrowRight size={14} /></a>
-            <a href={`tel:${CONTACT.phoneRaw}`} className="inline-flex items-center gap-2 border border-[hsl(var(--accent-foreground)/.4)] px-5 py-3 text-xs font-bold uppercase tracking-widest">Hemen ara <Phone size={14} /></a>
-            <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[hsl(var(--accent-foreground)/.4)] px-5 py-3 text-xs font-bold uppercase tracking-widest">WhatsApp’tan yaz <MessageCircle size={14} /></a>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <a href={BUSINESS.mapsDirections} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-5 py-2.5 text-[10px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary)/.9)] transition-colors">Yol Tarifi <ArrowRight size={13} /></a>
+            <a href={`tel:${CONTACT.phoneRaw}`} className="inline-flex items-center gap-2 border border-[hsl(var(--background)/.2)] px-5 py-2.5 text-[10px] font-bold uppercase tracking-[.1em] hover:bg-[hsl(var(--background)/.1)] transition-colors">Telefon <Phone size={13} /></a>
+            <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[hsl(var(--background)/.2)] px-5 py-2.5 text-[10px] font-bold uppercase tracking-[.1em] hover:bg-[hsl(var(--background)/.1)] transition-colors">WhatsApp <MessageCircle size={13} /></a>
           </div>
         </div>
-        <div className="aspect-square min-h-[280px] border border-[hsl(var(--accent-foreground)/.2)]">
-          <iframe title="2M Yapı Market Kuşadası merkez konumu" src={BUSINESS.mapsEmbed} className="h-full w-full border-0 grayscale" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
+        <div className="aspect-square min-h-[280px] border border-[hsl(var(--background)/.1)]">
+          <iframe title="2M Yapı Market Kuşadası merkez konumu" src={BUSINESS.mapsEmbed} className="h-full w-full border-0 grayscale opacity-80" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
         </div>
       </div>
     </section>
@@ -589,16 +618,16 @@ function GoogleReviewsSection() {
   return (
     <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="text-center">
-        <p className="eyebrow">GÜVENCE</p>
-        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Google’daki<br /><em>yorumlarımızı</em><br />inceleyin.</h2>
-        <p className="mx-auto mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">İşletmemizi Google’da bulabilir, yorumları okuyabilir ve bize ulaşabilirsiniz.</p>
+        <p className="eyebrow">Güvence</p>
+        <h2 className="mt-4 font-display text-4xl leading-[.92] md:text-6xl">Google'daki<br /><em>yorumlarımızı</em> inceleyin.</h2>
+        <p className="mx-auto mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">İşletmemizi Google'da bulabilir, yorumları okuyabilir ve bize ulaşabilirsiniz.</p>
         <a
           href={BUSINESS.googleProfile || `https://www.google.com/search?q=${encodeURIComponent(SITE.name + ' Kuşadası')}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-6 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-6 py-4 text-xs font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]"
+          className="mt-6 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-5 py-3 text-[11px] font-bold uppercase tracking-[.1em] text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary)/.9)] transition-colors"
         >
-          Google’da gör →
+          Google'da gör <ArrowRight size={13} />
         </a>
       </div>
     </section>
@@ -610,16 +639,16 @@ function FaqSection() {
   return (
     <section className="mx-auto max-w-[900px] px-5 py-20 md:py-28">
       <div className="text-center">
-        <p className="eyebrow">08 — SORULAR</p>
-        <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Aklınızdaki<br /><em>sorular.</em></h2>
+        <p className="eyebrow">Sorular</p>
+        <h2 className="mt-4 font-display text-4xl leading-[.92] md:text-6xl">Aklınızdaki<br /><em>sorular.</em></h2>
       </div>
-      <div className="mt-12 border-t border-[hsl(var(--border))]">
+      <div className="mt-10 border-t border-[hsl(var(--border))]">
         {faqItems.map(([q, a], i) => (
           <div key={q} className="border-b border-[hsl(var(--border))]">
-            <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full items-center justify-between gap-5 py-6 text-left text-lg font-bold">
-              <span>{q}</span><ChevronDown size={20} className={`shrink-0 transition ${open === i ? 'rotate-180 text-[hsl(var(--primary))]' : ''}`} />
+            <button type="button" aria-expanded={open === i} onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full items-center justify-between gap-5 py-5 text-left text-base font-bold">
+              <span>{q}</span><ChevronDown size={18} className={`shrink-0 transition ${open === i ? 'rotate-180 text-[hsl(var(--primary))]' : ''}`} />
             </button>
-            {open === i && <p className="max-w-2xl pb-6 text-sm leading-7 text-[hsl(var(--muted-foreground))]">{a}</p>}
+            {open === i && <p className="max-w-2xl pb-5 text-xs leading-7 text-[hsl(var(--muted-foreground))]">{a}</p>}
           </div>
         ))}
       </div>
@@ -631,14 +660,14 @@ function FaqSection() {
 function FinalCta() {
   return (
     <section className="bg-[hsl(var(--primary))] text-center text-[hsl(var(--primary-foreground))] px-5 py-16 md:py-24">
-      <p className="font-mono-brand text-[11px] uppercase tracking-[.26em] opacity-70">09 — BAŞLAYALIM</p>
-      <h2 className="mt-5 font-display text-5xl leading-[.9] md:text-7xl">Bir projeniz mi var?<br /><em>Başlayalım.</em></h2>
-      <p className="mx-auto mt-5 max-w-md text-sm leading-7 opacity-80">Bulunduğunuz bölgeyi ve yaptırmak istediğiniz işi yazın; gerisini birlikte netleştiririz.</p>
-      <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-        <Link href="/iletisim" className="inline-flex items-center gap-3 bg-[hsl(var(--foreground))] px-6 py-4 text-xs font-bold uppercase tracking-[.13em] text-[hsl(var(--background))]">Projenizi anlatın <ArrowRight size={16} /></Link>
-        <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border border-[hsl(var(--primary-foreground)/.4)] px-6 py-4 text-xs font-bold uppercase tracking-[.13em]"><MessageCircle size={16} /> WhatsApp’tan yaz</a>
+      <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] opacity-60">Başlayalım</p>
+      <h2 className="mt-5 font-display text-4xl leading-[.92] md:text-6xl">Projenizi<br /><em>birlikte değerlendirelim.</em></h2>
+      <p className="mx-auto mt-5 max-w-md text-sm leading-7 opacity-80">Yapılacak işi ve bulunduğunuz bölgeyi paylaşın. İhtiyacı değerlendirip size uygun uygulama sürecini konuşalım.</p>
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <Link href="/iletisim" className="inline-flex items-center gap-2 bg-[hsl(var(--foreground))] px-6 py-3.5 text-[11px] font-bold uppercase tracking-[.12em] text-[hsl(var(--background))] hover:bg-[hsl(var(--foreground)/.9)] transition-colors">Keşif / Teklif Al <ArrowRight size={14} /></Link>
+        <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border border-[hsl(var(--primary-foreground)/.3)] px-6 py-3.5 text-[11px] font-bold uppercase tracking-[.12em] hover:bg-[hsl(var(--primary-foreground)/.1)] transition-colors"><MessageCircle size={14} /> WhatsApp</a>
       </div>
-      <a href={`tel:${CONTACT.phoneRaw}`} className="mt-6 inline-flex items-center gap-2 text-sm underline underline-offset-4">{CONTACT.phoneDisplay}</a>
+      <a href={`tel:${CONTACT.phoneRaw}`} className="mt-5 inline-flex items-center gap-2 text-sm underline underline-offset-4 opacity-80 hover:opacity-100 transition-opacity">{CONTACT.phoneDisplay}</a>
     </section>
   );
 }
@@ -648,17 +677,16 @@ function Home() {
   return (
     <>
       <Meta
-        title="2M Yapı Market Proje | Ege Bölgesi Tadilat & Yapı Uygulamaları"
+        title="2M Yapı Market Proje | Ege Bölgesi Yapı & Tadilat Hizmetleri"
         description={SITE.description}
       />
       <main>
         <Hero />
+        <TrustStrip />
         <AboutSection />
         <Showcase />
-        <ServicesSection />
         <ProcessSection />
-        <BeforeAfterSection />
-        <MaterialStory />
+        <ServicesSection />
         <MaterialCraft />
         <ServiceAreaVisual />
         <StoreSection />
@@ -881,16 +909,23 @@ function ContactPage() {
     </>
   );
 }
+const GaleriPage = lazy(() => import('@/pages/galeri'));
+const BlogPage = lazy(() => import('@/pages/blog'));
+const BlogDetailPage = lazy(() => import('@/pages/blog-detail'));
+
 /* -------------------------------- ROUTER ----------------------------------- */
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/admin/*" component={AdminApp} />
       <Route path="/hizmetler" component={ServicesPage} />
       <Route path="/uygulamalar" component={ApplicationsPage} />
+      <Route path="/galeri" component={GaleriPage} />
+      <Route path="/blog" component={BlogPage} />
+      <Route path="/blog/:slug" component={BlogDetailPage} />
       <Route path="/iletisim" component={ContactPage} />
       {services.map((s) => <Route key={s.id} path={s.href} component={ServiceDetail} />)}
-      <Route path="/admin" component={AdminApp} />
+      <Route path="/" component={Home} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -945,17 +980,26 @@ function AdminApp() {
 }
 
 function App() {
+  const [location] = useLocation();
+  const isAdmin = location.startsWith('/admin');
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="site-noise min-h-[100dvh]">
-          <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-[hsl(var(--primary))] focus:px-4 focus:py-2 focus:text-[hsl(var(--primary-foreground))]">İçeriğe atla</a>
-          <Header />
-          <ErrorBoundary><main id="main-content"><Router /></main></ErrorBoundary>
-          <Footer />
-          <BottomBar />
-          <WhatsappWidget />
-        </div>
+        {isAdmin ? (
+          <div className="min-h-[100dvh] bg-[hsl(var(--background))]">
+            <ErrorBoundary><Router /></ErrorBoundary>
+          </div>
+        ) : (
+          <div className="site-noise min-h-[100dvh]">
+            <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-[hsl(var(--primary))] focus:px-4 focus:py-2 focus:text-[hsl(var(--primary-foreground))]">İçeriğe atla</a>
+            <Header />
+            <ErrorBoundary><main id="main-content"><Router /></main></ErrorBoundary>
+            <Footer />
+            <BottomBar />
+            <WhatsappWidget />
+          </div>
+        )}
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>

@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
-// TEK İŞLETME VERİSİ KAYNAĞI (single source of truth)
-// Fiziksel adres: Kuşadası. Hizmet bölgesi: Ege Bölgesi.
+// TEK ISLETME VERISI KAYNAGI (single source of truth) — V5 kurumsal guncelleme
+// Fiziksel adres: Kusadasi. Hizmet bolgesi: Ege Bolgesi.
 // ----------------------------------------------------------------------------
 
 export const BUSINESS = {
@@ -26,9 +26,9 @@ export const BUSINESS = {
   serviceRegion: 'Ege Bölgesi',
   serviceProvinces: ['Kuşadası', 'Aydın', 'İzmir', 'Muğla', 'Manisa', 'Denizli'],
   mapsDirections:
-    'https://www.google.com/maps/dir/?api=1&destination=2M+Yap%C4%B1+Market+Proje+Bianca%2C+So%C4%9Fucak%2C+Ku%C5%9Fadas%C4%B1+Davutlar+Yolu+75',
+    'https://www.google.com/maps/dir/?api=1&destination=2M+Yapi+Market+Proje+Bianca%2C+Sogucak%2C+Kusadasi+Davutlar+Yolu+75',
   mapsEmbed:
-    'https://www.google.com/maps?q=2M+Yap%C4%B1+Market+Proje+Bianca,+Ku%C5%9Fadas%C4%B1+Davutlar+Yolu+75,+So%C4%9Fucak&output=embed',
+    'https://www.google.com/maps?q=2M+Yapi+Market+Proje+Bianca,+Kusadasi+Davutlar+Yolu+75,+Sogucak&output=embed',
   googleProfile: '',
   whatsappDefaultMessage:
     'Merhaba, 2M Yapı Market web sitesinden ulaşıyorum. Yaptırmak istediğim işle ilgili bilgi ve keşif almak istiyorum.\nBulunduğum bölge: ',
@@ -56,8 +56,10 @@ export const CONTACT = {
 
 export const NAV = [
   { href: '/', label: 'Ana Sayfa' },
-  { href: '/hizmetler', label: 'Hizmetler' },
-  { href: '/uygulamalar', label: 'Uygulamalar' },
+  { href: '/hizmetler', label: 'Hizmetlerimiz' },
+  { href: '/uygulamalar', label: 'Uygulama Alanları' },
+  { href: '/galeri', label: 'Galeri' },
+  { href: '/blog', label: 'Blog' },
   { href: '/iletisim', label: 'İletişim' },
 ] as const;
 

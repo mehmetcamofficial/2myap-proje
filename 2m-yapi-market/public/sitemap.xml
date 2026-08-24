@@ -16,6 +16,16 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://2myapimarket.vercel.app/galeri</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://2myapimarket.vercel.app/blog</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://2myapimarket.vercel.app/iletisim</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

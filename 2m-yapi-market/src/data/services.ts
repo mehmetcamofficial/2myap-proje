@@ -17,6 +17,58 @@ export const CATEGORY_LABELS: Record<ServiceCategory, string> = {
   outdoor: 'Dış Alan',
 };
 
+export interface ServiceGroup {
+  id: string;
+  name: string;
+  description: string;
+  services: string[];
+}
+
+export const serviceGroups: ServiceGroup[] = [
+  {
+    id: 'yapi-tadilat',
+    name: 'Yapı & Tadilat',
+    description: 'Anahtar teslim tadilat, yenileme, dekorasyon ve tamirat işleri.',
+    services: ['Anahtar Teslim Tadilat', 'Yenileme', 'Dekorasyon', 'Tamirat'],
+  },
+  {
+    id: 'cati-yalitim',
+    name: 'Çatı & Yalıtım',
+    description: 'Çatı tamiri, yenileme, kenet çatı, çelik çatı, mantolama ve su/ısı yalıtımı.',
+    services: ['Çatı Tamiri', 'Çatı Yenileme', 'Kenet Çatı', 'Çelik Çatı', 'Mantolama', 'Su / Isı Yalıtımı'],
+  },
+  {
+    id: 'celik-moduler',
+    name: 'Çelik & Modüler Yapılar',
+    description: 'Çelik konstrüksiyon, çelik imalat, prefabrik, konteyner ve pergola.',
+    services: ['Çelik Konstrüksiyon', 'Çelik İmalat', 'Prefabrik', 'Konteyner', 'Pergola'],
+  },
+  {
+    id: 'cephe-yuzey',
+    name: 'Cephe & Yüzey',
+    description: 'Dış cephe, boya, alçı, sıva ve bordex uygulamaları.',
+    services: ['Dış Cephe', 'Boya', 'Alçı', 'Sıva', 'Bordex'],
+  },
+  {
+    id: 'zemin-seramik',
+    name: 'Zemin & Seramik',
+    description: 'Seramik döşeme, fayans ve zemin uygulamaları.',
+    services: ['Seramik Döşeme', 'Fayans', 'Zemin Uygulamaları'],
+  },
+  {
+    id: 'teknik',
+    name: 'Teknik Uygulamalar',
+    description: 'Elektrik, sıhhi tesisat ve su tesisatı.',
+    services: ['Elektrik', 'Sıhhi Tesisat', 'Su Tesisatı'],
+  },
+  {
+    id: 'havuz-dis',
+    name: 'Havuz & Dış Mekân',
+    description: 'Havuz yapımı, havuz yenileme ve dış mekân uygulamaları.',
+    services: ['Havuz Yapımı', 'Havuz Yenileme', 'Dış Mekân Uygulamaları'],
+  },
+];
+
 export interface Service {
   id: string;
   slug: string;
