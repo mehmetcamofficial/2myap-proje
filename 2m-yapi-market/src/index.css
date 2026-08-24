@@ -34,30 +34,30 @@
 }
 
 :root {
-  --background: 38 26% 93%;
-  --foreground: 26 21% 16%;
-  --border: 31 15% 78%;
-  --input: 31 15% 73%;
+  --background: 40 20% 95%;
+  --foreground: 24 15% 12%;
+  --border: 30 10% 80%;
+  --input: 30 10% 75%;
   --ring: 13 57% 52%;
-  --card: 40 29% 96%;
-  --card-foreground: 26 21% 16%;
-  --card-border: 31 17% 81%;
+  --card: 40 15% 97%;
+  --card-foreground: 24 15% 12%;
+  --card-border: 30 12% 83%;
   --primary: 13 57% 52%;
-  --primary-foreground: 40 29% 96%;
-  --secondary: 42 28% 86%;
-  --secondary-foreground: 26 21% 16%;
-  --muted: 36 17% 87%;
-  --muted-foreground: 27 10% 42%;
-  --accent: 176 27% 33%;
-  --accent-foreground: 40 29% 96%;
+  --primary-foreground: 40 15% 97%;
+  --secondary: 30 8% 89%;
+  --secondary-foreground: 24 15% 12%;
+  --muted: 30 8% 90%;
+  --muted-foreground: 24 8% 40%;
+  --accent: 24 12% 20%;
+  --accent-foreground: 40 15% 97%;
   --destructive: 0 65% 46%;
-  --destructive-foreground: 40 29% 96%;
+  --destructive-foreground: 40 15% 97%;
   --app-font-sans: 'Manrope', sans-serif;
   --app-font-serif: 'Instrument Serif', Georgia, serif;
   --app-font-mono: 'DM Mono', monospace;
-  --radius: 0.35rem;
-  --shadow-sm: 0 8px 20px rgba(55, 39, 25, .07);
-  --shadow-md: 0 18px 50px rgba(55, 39, 25, .12);
+  --radius: 0.2rem;
+  --shadow-sm: 0 4px 12px rgba(30, 25, 20, .06);
+  --shadow-md: 0 12px 32px rgba(30, 25, 20, .1);
   --motion-fast: 150ms cubic-bezier(.2,.8,.2,1);
   --motion-medium: 300ms cubic-bezier(.2,.8,.2,1);
   --motion-slow: 500ms cubic-bezier(.2,.8,.2,1);
@@ -66,24 +66,24 @@
 }
 
 .dark {
-  --background: 25 17% 13%;
-  --foreground: 38 26% 93%;
-  --border: 25 12% 27%;
-  --input: 25 12% 31%;
+  --background: 24 12% 10%;
+  --foreground: 40 12% 92%;
+  --border: 24 8% 22%;
+  --input: 24 8% 26%;
   --ring: 13 57% 58%;
-  --card: 25 15% 17%;
-  --card-foreground: 38 26% 93%;
-  --card-border: 25 12% 27%;
+  --card: 24 10% 13%;
+  --card-foreground: 40 12% 92%;
+  --card-border: 24 8% 22%;
   --primary: 13 57% 58%;
-  --primary-foreground: 25 17% 13%;
-  --secondary: 25 12% 24%;
-  --secondary-foreground: 38 26% 93%;
-  --muted: 25 12% 24%;
-  --muted-foreground: 33 13% 70%;
-  --accent: 176 27% 45%;
-  --accent-foreground: 38 26% 93%;
+  --primary-foreground: 24 12% 10%;
+  --secondary: 24 8% 18%;
+  --secondary-foreground: 40 12% 92%;
+  --muted: 24 8% 18%;
+  --muted-foreground: 24 8% 60%;
+  --accent: 24 10% 80%;
+  --accent-foreground: 24 12% 10%;
   --destructive: 0 65% 52%;
-  --destructive-foreground: 38 26% 93%;
+  --destructive-foreground: 40 12% 92%;
 }
 
 @layer base {
@@ -112,7 +112,7 @@
   background-size: 34px 34px;
 }
 .architectural-lines {
-  background-image: linear-gradient(120deg, transparent 48%, rgba(44,70,67,.18) 49%, transparent 50%), linear-gradient(25deg, transparent 65%, rgba(201,87,56,.23) 66%, transparent 67%);
+  background-image: linear-gradient(120deg, transparent 48%, rgba(30,25,20,.12) 49%, transparent 50%), linear-gradient(25deg, transparent 65%, rgba(180,120,80,.08) 66%, transparent 67%);
   background-size: 100% 100%;
 }
 .reveal { animation: reveal .7s cubic-bezier(.2,.8,.2,1) both; }
@@ -132,6 +132,7 @@
 .group:hover .service-icon { transform: rotate(-8deg) scale(1.08); }
 .service-icon-terracotta { background: hsl(var(--primary)); color: hsl(var(--primary-foreground)); }
 .service-icon-teal { background: hsl(var(--accent)); color: hsl(var(--accent-foreground)); }
+.service-icon-stone { background: hsl(30 8% 45%); color: hsl(40 15% 97%); }
 .service-icon-cream { background: hsl(var(--secondary)); color: hsl(var(--foreground)); }
 .service-icon-ink { background: hsl(var(--foreground)); color: hsl(var(--background)); }
 

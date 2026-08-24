@@ -1,5 +1,4 @@
-// Surec ve icerik verileri.
-// application artik services.ts'ten turetiliyor.
+// Sureç ve icerik verileri — V5 kurumsal guncelleme
 
 export interface BeforeAfter {
   image: string;
@@ -13,55 +12,48 @@ const px = (id: number, w = 900) =>
 export const beforeAfter: BeforeAfter = {
   label: 'Dönüşüm',
   image: px(5691622, 900),
-  alt: 'Yapı yenileme ve tadilat uygulamasından görünüm',
+  alt: 'Yenileme ve tadilat uygulamasından profesyonel görünüm',
 };
 
 export const processSteps: [string, string, string][] = [
-  ['01', 'Dinliyoruz', 'Yapılacak işi, kullanım amacını ve beklentinizi anlamakla başlıyoruz.'],
-  ['02', 'Yerinde İnceliyoruz', 'Gerekli durumlarda alanı yerinde değerlendiriyor, uygulama koşullarını netleştiriyoruz.'],
-  ['03', 'Planlıyor ve Tekliflendiriyoruz', 'Malzeme, iş kapsamı ve uygulama adımlarını açık bir plan ve teklif haline getiriyoruz.'],
-  ['04', 'Uyguluyoruz', 'Planlanan işi uygun ekip ve malzemeyle hayata geçiriyor, süreci düzenli şekilde takip ediyoruz.'],
+  ['01', 'İhtiyaç', 'İş kapsamını ve beklentiyi netleştiriyoruz.'],
+  ['02', 'Keşif', 'Gerekli durumlarda alanı yerinde inceliyoruz.'],
+  ['03', 'Teklif & Plan', 'Malzeme, işçilik ve uygulama adımlarını planlıyoruz.'],
+  ['04', 'Uygulama', 'Süreci uygun ekiplerle yürütüyoruz.'],
+  ['05', 'Kontrol', 'İş kapsamını teslim öncesinde kontrol ediyoruz.'],
 ];
 
 export const faqItems: [string, string][] = [
   [
-    'Keşif nasıl yapılıyor?',
+    'Keşif süreci nasıl ilerliyor?',
     'Önce ihtiyacınızı ve bulunduğunuz bölgeyi öğreniyoruz. Gerekli durumlarda yerinde inceleme yaparak iş kapsamını ve uygulama koşullarını netleştiriyoruz.',
   ],
   [
-    'Çatı tamiri ve yenileme yapıyor musunuz?',
-    'Evet. Çatının mevcut durumuna göre bakım, onarım veya yenileme seçeneklerini değerlendiriyoruz.',
+    'Hangi bölgelerde hizmet veriyorsunuz?',
+    'Merkezimiz Kuşadası\'nda. Aydın, İzmir, Muğla, Manisa, Denizli ve Ege Bölgesi genelindeki yapı ve uygulama taleplerini değerlendiriyoruz.',
   ],
   [
-    'Pergola yapımı hizmetiniz var mı?',
-    'Evet. Bahçe, teras ve açık alanlar için ihtiyaca uygun pergola uygulamaları yapıyoruz.',
+    'Birden fazla işi aynı proje kapsamında yürütebilir misiniz?',
+    'Evet. Tadilat, çelik, çatı, cephe, tesisat gibi farklı iş kalemlerini tek çatı altında planlayabilir ve yürütebiliriz.',
   ],
   [
-    'Prefabrik ve konteyner uygulamaları yapıyor musunuz?',
-    'Evet. Kullanım amacına ve proje ihtiyacına göre prefabrik ve konteyner yapı çözümleri sunuyoruz.',
+    'Malzeme ve işçilik birlikte planlanabiliyor mu?',
+    'Evet. Malzeme tedariki ve uygulama işçiliğini birlikte planlayarak süreci tek noktadan yönetiyoruz.',
   ],
   [
-    'Mantolama ve dış cephe işleri yapıyor musunuz?',
-    'Evet. Dış cephe yenileme, boya ve mantolama uygulamaları hizmetlerimiz arasındadır.',
+    'Çelik konstrüksiyon ve çatı uygulamalarınız var mı?',
+    'Evet. Çelik konstrüksiyon imalatı, çatı sistemleri, kenet çatı, çelik çatı ve mantolama uygulamaları hizmetlerimiz arasındadır.',
   ],
   [
-    'Elektrik ve sıhhi tesisat hizmetiniz var mı?',
-    'Evet. Tadilat ve yapı işleri kapsamında elektrik ve sıhhi tesisat uygulamalarını da planlayabiliyoruz.',
-  ],
-  [
-    'Havuz yapımı yapıyor musunuz?',
-    'Evet. Yeni havuz yapımı ve mevcut havuzların yenilenmesine yönelik uygulamalar gerçekleştiriyoruz.',
-  ],
-  [
-    'Anahtar teslim tadilat yapıyor musunuz?',
-    'İşin kapsamına göre malzeme, usta ve uygulama süreçlerini birlikte planlayabiliyoruz. Detayları keşif ve ihtiyaç değerlendirmesi sonrasında netleştiriyoruz.',
-  ],
-  [
-    'Fotoğraf göndererek ön bilgi alabilir miyim?',
+    'Fotoğraf göndererek ön değerlendirme alabilir miyim?',
     'Evet. WhatsApp üzerinden mevcut alanın ve yapılacak işin fotoğraflarını gönderebilirsiniz. Böylece ilk değerlendirmeyi daha hızlı yapabiliriz.',
   ],
   [
-    'Hangi bölgelere hizmet veriyorsunuz?',
-    'Merkezimiz Kuşadası\'nda olmakla birlikte Ege Bölgesi genelindeki yapı, tadilat ve uygulama taleplerini değerlendiriyoruz.',
+    'Anahtar teslim çalışabiliyor musunuz?',
+    'İşin kapsamına göre malzeme, usta ve uygulama süreçlerini birlikte planlayabiliyoruz. Detayları keşif ve ihtiyaç değerlendirmesi sonrasında netleştiriyoruz.',
+  ],
+  [
+    'Havuz yapımı ve yenileme hizmetiniz var mı?',
+    'Evet. Yeni havuz yapımı ve mevcut havuzların yenilenmesine yönelik uygulamalar gerçekleştiriyoruz.',
   ],
 ];
