@@ -2,8 +2,7 @@
 // Falls back to hardcoded data if API is unavailable.
 
 import type { Service } from '@/data/services';
-
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+import { apiFetch } from './api';
 
 export interface Faq {
   id: number;
@@ -54,7 +53,7 @@ export interface NavigationItem {
 
 async function cmsFetch<T>(path: string, init?: RequestInit): Promise<T | null> {
   try {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await apiFetch(path, {
       ...init,
       signal: AbortSignal.timeout(5000),
     });

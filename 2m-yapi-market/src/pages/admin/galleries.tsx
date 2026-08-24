@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './auth-context';
+import { apiFetch } from '@/lib/api';
 
 interface GalleryItem {
   id: number;
@@ -19,7 +20,7 @@ export function AdminGalleriesPage() {
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   const load = useCallback(() => {
-    fetch('/api/admin/galleries', { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch('/api/admin/galleries', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((data) => setGalleries(Array.isArray(data) ? data : []))
       .catch(() => {});
@@ -31,7 +32,7 @@ export function AdminGalleriesPage() {
     try {
       const method = editing ? 'PUT' : 'POST';
       const url = editing ? `/api/admin/galleries/${editing.id}` : '/api/admin/galleries';
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(form),
@@ -54,7 +55,7 @@ export function AdminGalleriesPage() {
 
   const del = async (id: number) => {
     if (!confirm('Silmek istediğinize emin misiniz? Bu işlem tüm galeri görsellerini de silecektir.')) return;
-    await fetch(`/api/admin/galleries/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    await apiFetch(`/api/admin/galleries/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
     load();
   };
 
@@ -72,14 +73,14 @@ export function AdminGalleriesPage() {
           </table>
         </div>
         <div className="border border-[hsl(var(--border))] p-5">
-          <h2 className="font-display text-lg font-bold">{editing ? 'Düzenle' : 'Yeni Ekle'}</h2>
+          <h2 className="font-display text-lg font-bold">{editing ? 'Düzenle' : 'Yeni Galeri'}</h2>
           <div className="mt-4 grid gap-3">
             <input placeholder="Başlık" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
             <input placeholder="Slug" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
-            <textarea placeholder="Açıklama" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
-            <input placeholder="Kapak görsel URL" value={form.coverImage} onChange={(e) => setForm({ ...form, coverImage: e.target.value })} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
+            <textarea placeholder="Açıklama" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
+            <input placeholder="Kapak görseli URL" value={form.coverImage} onChange={(e) => setForm({ ...form, coverImage: e.target.value })} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
             <input placeholder="Sıra" value={form.displayOrder} onChange={(e) => setForm({ ...form, displayOrder: e.target.value })} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} /> Yayında</label>
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} /> Yayınla</label>
             <div className="flex gap-2">
               <button onClick={save} className="flex-1 bg-[hsl(var(--primary))] px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary-foreground))]">{editing ? 'Güncelle' : 'Ekle'}</button>
               {editing && <button onClick={() => { setEditing(null); setForm({ title: '', slug: '', description: '', coverImage: '', displayOrder: '0', published: true }); }} className="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">İptal</button>}

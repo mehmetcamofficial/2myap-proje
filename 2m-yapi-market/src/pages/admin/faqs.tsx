@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './auth-context';
+import { apiFetch } from '@/lib/api';
 
 interface Faq {
   id: number;
@@ -19,7 +20,7 @@ export function AdminFaqsPage() {
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null);
 
   const load = useCallback(() => {
-    fetch('/api/admin/faqs', { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch('/api/admin/faqs', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((data) => setFaqs(Array.isArray(data) ? data : []))
       .catch(() => {});
@@ -32,7 +33,7 @@ export function AdminFaqsPage() {
       const body = { ...form, serviceSlug: form.serviceSlug || null };
       const method = editing ? 'PUT' : 'POST';
       const url = editing ? `/api/admin/faqs/${editing.id}` : '/api/admin/faqs';
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(body),
@@ -55,12 +56,12 @@ export function AdminFaqsPage() {
 
   const del = async (id: number) => {
     if (!confirm('Silmek istediğinize emin misiniz?')) return;
-    await fetch(`/api/admin/faqs/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    await apiFetch(`/api/admin/faqs/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
     load();
   };
 
   const togglePublished = async (f: Faq) => {
-    await fetch(`/api/admin/faqs/${f.id}`, {
+    await apiFetch(`/api/admin/faqs/${f.id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ ...f, published: !f.published, serviceSlug: f.serviceSlug || null }),
@@ -70,9 +71,9 @@ export function AdminFaqsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold">S.S.S. (SSS)</h1>
+      <h1 className="font-display text-3xl font-bold">S.S.S.</h1>
       {toast && <div className={`mt-4 px-4 py-3 text-sm font-medium ${toast.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200' : 'bg-red-50 text-red-800 border border-red-200'}`}>{toast.msg}</div>}
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_350px]">
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_400px]">
         <div className="border border-[hsl(var(--border))]">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-[hsl(var(--border))] text-left text-xs uppercase tracking-wider text-[hsl(var(--muted-foreground))]"><th className="px-4 py-3">Soru</th><th className="px-4 py-3">Kategori</th><th className="px-4 py-3">Durum</th><th className="px-4 py-3" /></tr></thead>
@@ -82,14 +83,16 @@ export function AdminFaqsPage() {
           </table>
         </div>
         <div className="border border-[hsl(var(--border))] p-5">
-          <h2 className="font-display text-lg font-bold">{editing ? 'Düzenle' : 'Yeni Ekle'}</h2>
+          <h2 className="font-display text-lg font-bold">{editing ? 'Düzenle' : 'Yeni S.S.S.'}</h2>
           <div className="mt-4 grid gap-3">
             <textarea placeholder="Soru" value={form.question} onChange={(e) => setForm({ ...form, question: e.target.value })} rows={2} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
             <textarea placeholder="Cevap" value={form.answer} onChange={(e) => setForm({ ...form, answer: e.target.value })} rows={4} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
-            <input placeholder="Kategori (ör: genel, hizmet)" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
-            <input placeholder="Hizmet slug (boş = genel)" value={form.serviceSlug} onChange={(e) => setForm({ ...form, serviceSlug: e.target.value })} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
+            <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm">
+              <option value="genel">Genel</option><option value="hizmet">Hizmet</option><option value="fiyat">Fiyat</option><option value="sure">Süre</option><option value="bölge">Bölge</option>
+            </select>
+            <input placeholder="Hizmet slug (opsiyonel)" value={form.serviceSlug} onChange={(e) => setForm({ ...form, serviceSlug: e.target.value })} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
             <input placeholder="Sıra" value={form.displayOrder} onChange={(e) => setForm({ ...form, displayOrder: e.target.value })} className="border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm" />
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} /> Yayında</label>
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} /> Yayınla</label>
             <div className="flex gap-2">
               <button onClick={save} className="flex-1 bg-[hsl(var(--primary))] px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary-foreground))]">{editing ? 'Güncelle' : 'Ekle'}</button>
               {editing && <button onClick={() => { setEditing(null); setForm({ question: '', answer: '', category: 'genel', serviceSlug: '', displayOrder: '0', published: true }); }} className="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">İptal</button>}

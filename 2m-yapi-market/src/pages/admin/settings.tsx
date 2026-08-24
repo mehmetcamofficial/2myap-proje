@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './auth-context';
+import { apiFetch } from '@/lib/api';
 
 export function AdminSettingsPage() {
   const { token } = useAuth();
@@ -7,7 +8,7 @@ export function AdminSettingsPage() {
   const [dirty, setDirty] = useState(false);
 
   const load = useCallback(() => {
-    fetch('/api/admin/settings', { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch('/api/admin/settings', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -23,7 +24,7 @@ export function AdminSettingsPage() {
 
   const save = async () => {
     for (const [key, value] of Object.entries(settings)) {
-      await fetch(`/api/admin/settings/${key}`, {
+      await apiFetch(`/api/admin/settings/${key}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ value }),

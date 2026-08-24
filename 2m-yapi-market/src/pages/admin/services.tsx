@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './auth-context';
+import { apiFetch } from '@/lib/api';
 
 interface Service {
   id: number;
@@ -19,7 +20,7 @@ export function AdminServicesPage() {
   const [form, setForm] = useState({ slug: '', name: '', category: 'interior', short: '', image: '', enabled: true, sortOrder: '0' });
 
   const load = useCallback(() => {
-    fetch('/api/admin/services', { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch('/api/admin/services', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((data) => setServices(Array.isArray(data) ? data : []))
       .catch(() => {});
@@ -30,7 +31,7 @@ export function AdminServicesPage() {
   const save = async () => {
     const method = editing ? 'PUT' : 'POST';
     const url = editing ? `/api/admin/services/${editing.id}` : '/api/admin/services';
-    await fetch(url, {
+    await apiFetch(url, {
       method,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(form),
@@ -47,7 +48,7 @@ export function AdminServicesPage() {
 
   const del = async (id: number) => {
     if (!confirm('Silmek istediğinize emin misiniz?')) return;
-    await fetch(`/api/admin/services/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    await apiFetch(`/api/admin/services/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
     load();
   };
 

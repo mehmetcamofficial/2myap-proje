@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from './auth-context';
+import { apiFetchJson } from '@/lib/api';
 
 export function AdminAccountPage() {
   const { token, user } = useAuth();
@@ -27,13 +28,11 @@ export function AdminAccountPage() {
     }
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/change-password', {
+      await apiFetchJson('/api/admin/change-password', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ currentPassword, newPassword }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Şifre güncellenemedi');
       setToast({ type: 'success', msg: 'Şifre güncellendi' });
       setCurrentPassword('');
       setNewPassword('');

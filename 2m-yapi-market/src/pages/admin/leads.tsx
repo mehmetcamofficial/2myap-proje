@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './auth-context';
+import { apiFetch } from '@/lib/api';
 
 interface Lead {
   id: number;
@@ -19,7 +20,7 @@ export function AdminLeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
 
   const load = useCallback(() => {
-    fetch('/api/admin/leads', { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch('/api/admin/leads', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((data) => setLeads(Array.isArray(data) ? data : []))
       .catch(() => {});
@@ -28,7 +29,7 @@ export function AdminLeadsPage() {
   useEffect(() => { load(); }, [load]);
 
   const updateStatus = async (id: number, status: string) => {
-    await fetch(`/api/admin/leads/${id}`, {
+    await apiFetch(`/api/admin/leads/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ status }),

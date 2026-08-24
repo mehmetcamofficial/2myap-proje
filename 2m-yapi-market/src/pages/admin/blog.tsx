@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './auth-context';
+import { apiFetch } from '@/lib/api';
 
 interface BlogPost {
   id: number;
@@ -19,7 +20,7 @@ export function AdminBlogPage() {
   const [form, setForm] = useState({ slug: '', title: '', excerpt: '', content: '', image: '', published: false });
 
   const load = useCallback(() => {
-    fetch('/api/admin/blog', { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch('/api/admin/blog', { headers: { Authorization: `Bearer ${token}` } })
       .then((r) => r.json())
       .then((data) => setPosts(Array.isArray(data) ? data : []))
       .catch(() => {});
@@ -30,7 +31,7 @@ export function AdminBlogPage() {
   const save = async () => {
     const method = editing ? 'PUT' : 'POST';
     const url = editing ? `/api/admin/blog/${editing.id}` : '/api/admin/blog';
-    await fetch(url, {
+    await apiFetch(url, {
       method,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(form),
@@ -47,7 +48,7 @@ export function AdminBlogPage() {
 
   const del = async (id: number) => {
     if (!confirm('Silmek istediğinize emin misiniz?')) return;
-    await fetch(`/api/admin/blog/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+    await apiFetch(`/api/admin/blog/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
     load();
   };
 
