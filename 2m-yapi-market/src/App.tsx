@@ -273,22 +273,87 @@ const BottomBar = memo(function BottomBar() {
 const HERO_IMG = 'https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600';
 
 function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [entered, setEntered] = useState(false);
+  const rafRef = useRef<number>(0);
+  const mouseRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq.matches) { setEntered(true); return; }
+    const t = setTimeout(() => setEntered(true), 100);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mq.matches) return;
+
+    const onMove = (e: MouseEvent) => {
+      const section = sectionRef.current;
+      if (!section) return;
+      const rect = section.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      mouseRef.current = {
+        x: (e.clientX - cx) / (rect.width / 2),
+        y: (e.clientY - cy) / (rect.height / 2),
+      };
+    };
+
+    let idle = 0;
+    const tick = () => {
+      idle += 0.003;
+      const idleX = Math.sin(idle) * 4;
+      const idleY = Math.cos(idle * 0.7) * 3;
+      const px = mouseRef.current.x * 12 + idleX;
+      const py = mouseRef.current.y * 8 + idleY;
+      setMouse({ x: px, y: py });
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
   return (
-    <section className="relative flex min-h-[92vh] items-center overflow-hidden">
-      <ServiceImage src={HERO_IMG} alt="Villa ve dış mekân uygulamasına dair görsel" className="absolute inset-0 h-full w-full object-cover" loading="eager" />
+    <section ref={sectionRef} className="relative flex min-h-[92vh] items-center overflow-hidden">
+      {/* Background image layer — moves most */}
+      <div
+        className="absolute inset-[-20px] transition-none will-change-transform"
+        style={{ transform: `translate(${mouse.x}px, ${mouse.y}px) scale(1.05)` }}
+      >
+        <ServiceImage src={HERO_IMG} alt="Villa ve dış mekân uygulamasına dair görsel" className="h-full w-full object-cover" loading="eager" />
+      </div>
       <div className="absolute inset-0 bg-[hsl(var(--accent))] opacity-40" />
-      <div className="absolute inset-0 architectural-lines opacity-30" />
+      {/* Architectural grid layer — moves at half amplitude */}
+      <div
+        className="absolute inset-[-10px] architectural-lines opacity-30 will-change-transform"
+        style={{ transform: `translate(${mouse.x * 0.5}px, ${mouse.y * 0.5}px)` }}
+      />
+      {/* Content layer — stable */}
       <div className="relative mx-auto max-w-[1240px] px-5 pt-20 pb-24 md:px-8">
-        <p className="font-mono-brand text-[11px] tracking-[.28em] uppercase text-[hsl(var(--accent-foreground))]">2M YAPI MARKET PROJE · KUŞADASI</p>
+        <p className={`font-mono-brand text-[11px] tracking-[.28em] uppercase text-[hsl(var(--accent-foreground))] transition-all duration-700 delay-200 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          2M YAPI MARKET PROJE · KUŞADASI
+        </p>
         <h1 className="mt-6 font-display text-[clamp(2.8rem,8vw,7rem)] leading-[.85] tracking-[-.04em] text-[hsl(var(--background))]">
-          Tadilat, çelik,<br />çatı & <em>havuz</em><br />tek noktada.
+          <span className={`block transition-all duration-500 delay-300 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>Tadilat, çelik,</span>
+          <span className={`block transition-all duration-500 delay-500 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>çatı & <em>havuz</em></span>
+          <span className={`block transition-all duration-500 delay-700 ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>tek noktada.</span>
         </h1>
-        <p className="mt-8 max-w-[560px] text-lg leading-8 text-[hsl(var(--background)/.85)]">Malzemeden uygulamaya; çatı, pergola, çelik ve tadilat işlerini tek muhatapta yürütüyoruz. Tüm Ege Bölgesi’nde hizmet.</p>
-        <div className="mt-10 flex flex-wrap items-center gap-4">
+        <p className={`mt-8 max-w-[560px] text-lg leading-8 text-[hsl(var(--background)/.85)] transition-all duration-600 delay-[800ms] ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          Malzemeden uygulamaya; çatı, pergola, çelik ve tadilat işlerini tek muhatapta yürütüyoruz. Tüm Ege Bölgesi'nde hizmet.
+        </p>
+        <div className={`mt-10 flex flex-wrap items-center gap-4 transition-all duration-600 delay-[950ms] ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <Link href="/iletisim" className="inline-flex items-center gap-3 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">Projenizi anlatın <ArrowRight size={16} /></Link>
           <a href={whatsappUrl(WA_GENERIC)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 border border-[hsl(var(--background)/.4)] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--background))]"><MessageCircle size={16} /> WhatsApp</a>
         </div>
-        <p className="mt-6 flex flex-wrap items-center gap-3 text-sm text-[hsl(var(--background)/.8)]">
+        <p className={`mt-6 flex flex-wrap items-center gap-3 text-sm text-[hsl(var(--background)/.8)] transition-all duration-500 delay-[1100ms] ${entered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
           <Phone size={15} /> <a href={`tel:${CONTACT.phoneRaw}`} className="underline decoration-[hsl(var(--background)/.4)] underline-offset-2">{CONTACT.phoneDisplay}</a>
           <span className="opacity-60">·</span>
           <span className="font-mono-brand text-[11px] tracking-[.16em] uppercase opacity-90">Kuşadası merkezli · Tüm Ege Bölgesi</span>
@@ -452,25 +517,23 @@ function ProcessSection() {
 
 /* ------------------------- BEFORE / AFTER ------------------------- */
 function BeforeAfterSection() {
-  const baImages = [{
-    id: 'ba-main',
-    beforeSrc: beforeAfter.before,
-    afterSrc: beforeAfter.after,
-    beforeAlt: `${beforeAfter.label} - Öncesi`,
-    afterAlt: `${beforeAfter.label} - Sonrası`,
-    label: beforeAfter.label,
-  }];
-
   return (
     <section className="mx-auto max-w-[1240px] px-5 py-20 md:px-8 md:py-28">
       <div className="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:items-center">
         <div>
-          <p className="eyebrow">06 — ÖNCE / SONRA</p>
+          <p className="eyebrow">06 — DÖNÜŞÜM ÖRNEĞİ</p>
           <h2 className="mt-4 font-display text-5xl leading-[.9] md:text-7xl">Değişimi<br /><em>görün.</em></h2>
-          <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Doğru uygulamanın bir yaşam alanında yaratabileceği değişimi keşfedin.</p>
+          <p className="mt-6 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Doğru uygulamanın bir yapıda yaratabileceği dönüşümü karşılaştırın.</p>
+          <p className="mt-4 max-w-md text-sm leading-7 text-[hsl(var(--muted-foreground))]">Her proje, mevcut alanın ve ihtiyacın değerlendirilmesiyle başlar. Keşif sürecinde malzeme, kapsam ve uygulama adımları netleştirilir.</p>
           <Link href="/iletisim" className="mt-6 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]">Keşif iste <span className="cta-arrow inline-block">→</span></Link>
         </div>
-        <BeforeAfterSlider images={baImages} />
+        <div className="relative overflow-hidden">
+          <ServiceImage src={beforeAfter.image} alt={beforeAfter.alt} className="aspect-[4/3] w-full object-cover" loading="lazy" />
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+            <p className="font-mono-brand text-xs text-white/80">{beforeAfter.label}</p>
+            <p className="mt-1 text-sm font-semibold text-white">Tadilat ve yenileme uygulaması</p>
+          </div>
+        </div>
       </div>
     </section>
   );
