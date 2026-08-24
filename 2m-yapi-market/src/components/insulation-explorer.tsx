@@ -108,3 +108,5 @@ export function InsulationExplorer() {
     </section>
   );
 }
+
+export default InsulationExplorer;

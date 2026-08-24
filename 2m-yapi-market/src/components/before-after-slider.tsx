@@ -170,3 +170,5 @@ export function BeforeAfterSlider({ images }: BeforeAfterSliderProps) {
     </div>
   );
 }
+
+export default BeforeAfterSlider;

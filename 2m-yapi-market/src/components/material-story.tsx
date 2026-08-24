@@ -66,3 +66,5 @@ export function MaterialStory() {
     </section>
   );
 }
+
+export default MaterialStory;

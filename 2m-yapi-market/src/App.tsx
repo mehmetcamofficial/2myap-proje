@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Route, Switch, useRoute, useLocation } from 'wouter';
 import {
   ArrowRight, ChevronDown, MapPin, Menu, MessageCircle, Phone, X,
@@ -11,17 +11,22 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { ServiceImage } from '@/components/service-image';
 import NotFound from '@/pages/not-found';
 import { QuoteForm } from '@/components/quote-form';
-import { BeforeAfterSlider } from '@/components/before-after-slider';
 import { WhatsappWidget } from '@/components/whatsapp-widget';
-import { RoofSystemExplorer } from '@/components/roof-explorer';
-import { SteelAssembly } from '@/components/steel-assembly';
-import { PoolConstructionTimeline } from '@/components/pool-timeline';
-import { InsulationExplorer } from '@/components/insulation-explorer';
-import { MaterialStory } from '@/components/material-story';
-import { ServiceAreaVisual } from '@/components/service-area-map';
 import { BUSINESS, CONTACT, NAV, SITE, whatsappUrl } from '@/data/site';
 import { services, CATEGORY_LABELS } from '@/data/services';
 import { beforeAfter, processSteps, faqItems } from '@/data/content';
+
+const BeforeAfterSlider = lazy(() => import('@/components/before-after-slider').then(m => ({ default: m.BeforeAfterSlider })));
+const RoofSystemExplorer = lazy(() => import('@/components/roof-explorer').then(m => ({ default: m.RoofSystemExplorer })));
+const SteelAssembly = lazy(() => import('@/components/steel-assembly').then(m => ({ default: m.SteelAssembly })));
+const PoolConstructionTimeline = lazy(() => import('@/components/pool-timeline').then(m => ({ default: m.PoolConstructionTimeline })));
+const InsulationExplorer = lazy(() => import('@/components/insulation-explorer').then(m => ({ default: m.InsulationExplorer })));
+const MaterialStory = lazy(() => import('@/components/material-story').then(m => ({ default: m.MaterialStory })));
+const ServiceAreaVisual = lazy(() => import('@/components/service-area-map').then(m => ({ default: m.ServiceAreaVisual })));
+
+function SectionFallback() {
+  return <div className="mx-auto max-w-[1240px] px-5 py-20 md:px-8" aria-hidden="true"><div className="h-40 animate-pulse bg-[hsl(var(--muted))]" /></div>;
+}
 
 const queryClient = new QueryClient();
 
@@ -98,6 +103,17 @@ function Meta({
         serviceType: service.name,
       });
     }
+    if (path === '/') {
+      ld.push({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqItems.map(([q, a]) => ({
+          '@type': 'Question',
+          name: q,
+          acceptedAnswer: { '@type': 'Answer', text: a },
+        })),
+      });
+    }
     const script = document.createElement('script');
     script.type = 'application/ld+json';
     script.text = JSON.stringify(ld);
@@ -110,7 +126,7 @@ function Meta({
   return null;
 }
 
-function Mark() {
+const Mark = memo(function Mark() {
   return (
     <Link href="/" className="flex items-center gap-3" aria-label="2M Yapı Market ana sayfa">
       <span className="relative grid h-10 w-10 place-items-center bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]">
@@ -123,17 +139,31 @@ function Mark() {
       </span>
     </Link>
   );
-}
+});
 
 function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [location] = useLocation();
+  const closeRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    let raf: number;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => setScrolled(window.scrollY > 20));
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      closeRef.current?.focus();
+      const prev = document.activeElement as HTMLElement | null;
+      return () => prev?.focus();
+    }
+  }, [open]);
 
   const isActive = (href: string) => {
     if (href === '/') return location === '/';
@@ -168,7 +198,7 @@ function Header() {
       </header>
       {open && (
         <nav aria-label="Mobil menü" className="fixed inset-0 z-50 flex flex-col justify-between bg-[hsl(var(--foreground))] px-7 py-8 text-[hsl(var(--background))]">
-          <button type="button" aria-label="Menü kapat" onClick={() => setOpen(false)} className="self-end"><X size={26} /></button>
+          <button ref={closeRef} type="button" aria-label="Menü kapat" onClick={() => setOpen(false)} className="self-end"><X size={26} /></button>
           <div className="flex flex-col gap-2">
             <p className="font-mono-brand text-[10px] uppercase tracking-[.22em] opacity-60">ANA MENÜ</p>
             {NAV.map((n) => {
@@ -188,7 +218,7 @@ function Header() {
     </>
   );
 }
-function Footer() {
+const Footer = memo(function Footer() {
   return (
     <footer className="border-t border-[hsl(var(--border))] bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]">
       <div className="mx-auto grid max-w-[1240px] gap-10 px-5 py-14 md:grid-cols-[1.3fr_1fr_1fr_1.2fr] md:px-8">
@@ -228,9 +258,9 @@ function Footer() {
       </div>
     </footer>
   );
-}
+});
 
-function BottomBar() {
+const BottomBar = memo(function BottomBar() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-45 grid grid-cols-3 border-t border-[hsl(var(--border))] bg-[hsl(var(--card)/.96)] pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
       <a href={`tel:${CONTACT.phoneRaw}`} className="flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-bold uppercase"><Phone size={16} /> Ara</a>
@@ -238,7 +268,7 @@ function BottomBar() {
       <Link href="/iletisim" className="flex flex-col items-center justify-center gap-1 bg-[hsl(var(--primary))] py-2.5 text-[10px] font-bold uppercase text-[hsl(var(--primary-foreground))]"><ArrowRight size={16} /> Keşif iste</Link>
     </div>
   );
-}
+});
 /* -------------------------------- HERO ------------------------------------ */
 const HERO_IMG = 'https://images.pexels.com/photos/2102587/pexels-photo-2102587.jpeg?auto=compress&cs=tinysrgb&fit=crop&w=1600';
 
@@ -807,8 +837,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="site-noise min-h-[100dvh]">
+          <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-[hsl(var(--primary))] focus:px-4 focus:py-2 focus:text-[hsl(var(--primary-foreground))]">İçeriğe atla</a>
           <Header />
-          <ErrorBoundary><Router /></ErrorBoundary>
+          <ErrorBoundary><main id="main-content"><Router /></main></ErrorBoundary>
           <Footer />
           <BottomBar />
           <WhatsappWidget />

@@ -1,3 +1,4 @@
+import { Link } from 'wouter';
 import { useScrollReveal } from '@/hooks/use-scroll';
 
 const PROVINCES = [
@@ -33,9 +34,9 @@ export function ServiceAreaVisual() {
                 </span>
               ))}
             </div>
-            <a href="/iletisim" className="mt-8 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">
+            <Link href="/iletisim" className="mt-8 inline-flex items-center gap-2 bg-[hsl(var(--primary))] px-6 py-4 text-[12px] font-extrabold uppercase tracking-[.12em] text-[hsl(var(--primary-foreground))]">
               Projenizi anlatın <span className="cta-arrow inline-block">→</span>
-            </a>
+            </Link>
           </div>
 
           {/* Map visualization */}
@@ -114,3 +115,5 @@ export function ServiceAreaVisual() {
     </section>
   );
 }
+
+export default ServiceAreaVisual;

@@ -188,3 +188,5 @@ export function SteelAssembly() {
     </section>
   );
 }
+
+export default SteelAssembly;

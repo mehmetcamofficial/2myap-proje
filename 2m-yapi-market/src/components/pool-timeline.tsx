@@ -135,3 +135,5 @@ export function PoolConstructionTimeline() {
     </section>
   );
 }
+
+export default PoolConstructionTimeline;

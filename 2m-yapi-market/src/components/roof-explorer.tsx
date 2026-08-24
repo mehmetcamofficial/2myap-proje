@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'wouter';
 import { useScrollReveal } from '@/hooks/use-scroll';
 import { ServiceImage } from '@/components/service-image';
 
@@ -101,14 +102,16 @@ export function RoofSystemExplorer() {
               </li>
             ))}
           </ul>
-          <a
+          <Link
             href="/iletisim"
             className="mt-8 inline-flex items-center gap-2 border-b border-[hsl(var(--primary))] pb-1 text-xs font-bold uppercase tracking-widest text-[hsl(var(--primary))]"
           >
             Teklif al <span className="cta-arrow inline-block">→</span>
-          </a>
+          </Link>
         </div>
       </div>
     </section>
   );
 }
+
+export default RoofSystemExplorer;
